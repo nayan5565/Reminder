@@ -1,3 +1,86 @@
 <resources>
     <string name="app_name">Reminder</string>
+    <string name="main_interval">%1$s minutes between alarms</string>
+    <string name="interval_dialog_title">Enter interval between alarms:</string>
+    <string name="all_minutes">minutes</string>
+    <string name="number_dialog_title">Enter number of alarms:</string>
+    <string name="preferences_title">Settings</string>
+    <string name="preferences_duration_title">Duration of a ringtone and vibrate</string>
+    <string name="preferences_ringtone_title">Choose ringtone</string>
+    <string name="preferences_default_duration">30 seconds</string>
+    <string name="preferences_default_ringtone_name">Basic</string>
+    <string name="main_alarm_turned_off_toast">All alarms turned off</string>
+    <string name="main_alarm_turned_on_toast">All alarms turned on</string>
+    <string name="main_alarm_reset_toast">All alarms reset</string>
+    <string name="timepicker_dialog_title">Set time of the first alarm:</string>
+    <string name="all_time_left">%1$s hr %2$s min left</string>
+    <string name="notification_icon_title">Alarms turned on</string>
+    <string name="main_firstalarm_time">First alarm time: %1$s</string>
+    <string name="chooseringtone_chooser_title">Select a file</string>
+
+    <string name="dismiss_alarm_notification_title">Alarm!</string>
+    <string name="dismiss_alarm_notification_body">You\'ve set an alarm to %1$s</string>
+    <string name="dismiss_alarm_notification_dismiss_button_title">Dismiss</string>
+
+    <string name="interval_dialog_ok_button_name">OK</string>
+    <string name="interval_dialog_cancel_button_name">Cancel</string>
+    <string name="number_of_alarms_dialog_ok_button_name">OK</string>
+    <string name="number_of_alarms_dialog_cancel_button_name">Cancel</string>
+    <string name="test">Test</string>
+
+    <string name="switch_turn_on_title">Sunrise Alarm</string>
+    <string name="switch_turn_on">Enable</string>
+    <string name="switch_turn_off">Disable</string>
+    <string name="share_app">Share App</string>
+    <string name="rate_app">Rate App</string>
+    <string name="not_now">Not Now</string>
+    <string name="rate_now">Rating</string>
+    <string name="description">If you enjoy using this app, it would be great to take a moment to rate it.</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="vibrate">Vibrate</string>
+    <string name="repeated_alarm">Repeated Alarm</string>
+    <string name="repeat">Repeat</string>
+    <string name="next_alarm_title">Next Alarm Time</string>
+    <string name="set_alarm">Set Alarm</string>
+    <string name="set">Set</string>
+    <string name="all_days">Every day</string>
+    <string name="alarm_before_sunrise">Time before sunrise</string>
+    <string name="no_alarm_set">No alarm set</string>
+    <string name="dismiss_title">Dismiss</string>
+    <string name="no_alarm">There is no  </string>
+    <string name="tap_on_icon">Tap on plus icon to set new alarm</string>
+    <string name="settings">Settings</string>
+    <string name="buy_premium">Buy Premium</string>
+    <string name="dia_text">Dialog Text</string>
+    <string name="dia_text_content">“Loser press the snooze button”</string>
+    <string name="switch_on">On</string>
+    <string name="switch_off">Off</string>
+    <string name="alarm_label">Alarm Label</string>
+    <string name="alarm_volume">Alarm Volume</string>
+    <string name="alarm_tone">Alarm Tone</string>
+    <string name="snooze_title">Snooze</string>
+    <string name="interval_title">Interval</string>
+    <string name="intervalOne">05 Minutes</string>
+    <string name="intervalTwo">10 Minutes</string>
+    <string name="intervalThree">15 Minutes</string>
+    <string name="repeatlOne">3 Times</string>
+    <string name="repeatTwo">5 Times</string>
+    <string name="repeatThree">Continiously</string>
+    <string name="dialog_text">Dialog Text</string>
+    <string name="stop">STOP</string>
+    <string name="privacy">Privacy Policy</string>
+    //test
+    <string name="Ads_mob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="Ads_mob_banner_id">ca-app-pub-3940256099942544/6300978111</string>
+
+    //original
+    <!--    <string name="Ads_mob_app_id">ca-app-pub-9401766416999660~3467334777</string>-->
+    <!--    <string name="Ads_mob_banner_id">ca-app-pub-9401766416999660/3275763086</string>-->
+
+
+    <plurals name="main_number_of_alarms">
+        <item quantity="one">%1$s alarm</item>
+        <item quantity="other">%1$s alarms</item>
+    </plurals>
 </resources>

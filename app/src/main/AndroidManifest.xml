@@ -18,21 +18,43 @@
     <uses-permission android:name="android.permission.PREVENT_POWER_KEY" />
 
     <application
+        android:name=".tools.MyApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:theme="@style/Theme.Reminder"
         tools:node="replace"
-        android:name=".Tools.MyApp"
-        android:theme="@style/Theme.Reminder">
-        <activity android:name="com.shadhinlab.reminder.MainActivity">
+        tools:targetApi="n">
+        <activity android:name=".activities.SetReminderActivity"></activity>
+        <activity android:name=".activities.DismissActivity" />
+        <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <receiver android:name=".receiver.MyBroadcastReceiver" /> <!-- You see how the filter here is boot completed, that is why that receiver works, cause you declared the filter here -->
+        <receiver
+            android:name=".receiver.DeviceBootReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".receiver.DismissNotificationReceiver">
+            <intent-filter android:priority="999">
+                <action android:name="com.anshmidt.multialarm.dismissNotification" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

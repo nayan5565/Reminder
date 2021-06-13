@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiClient {
     private static Retrofit retrofit = null;
     private static ApiInterface apiRequests;
-    private static String baseUrlPrayerTime = "http://api.aladhan.com/v1/";
+    private static String baseUrlPrayerTime = "http://api.aladhan.com/";
 
 
     public static ApiInterface getInstance() {

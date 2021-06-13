@@ -7,4 +7,29 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="colorPrimary">#FC910D</color>
+    <color name="colorPrimaryDark">#FC910D</color>
+    <color name="colorAccent">#FC910D</color>
+    <color name="progress_sec">#33FC910D</color>
+
+
+    <color name="primary">#b62020</color>
+    <color name="primaryDark">#8e0b0b</color>
+    <color name="launcher_icon">#f73f38</color>
+    <color name="dismiss_activity_textcolor">#ffffff</color>
+    <color name="dismiss_activity_background">#000000</color>
+    <color name="main_textcolor">#777777</color>
+    <color name="main_background">#ffffff</color>
+    <color name="main_disabled_textcolor">#aaaaaa</color>
+    <color name="oval_bg">#33C4C4C4</color>
+    <color name="text_color_active">#444444</color>
+    <color name="text_color_active_bold">#222222</color>
+    <color name="text_color_in_active_bold">#66222222</color>
+    <color name="text_color_in_active">#66444444</color>
+    <color name="toolbar_title">#ED6D50</color>
+    <color name="dismiss_title">#1674B1</color>
+    <color name="line_color">#D0E3EF</color>
+    <color name="alarm_popup_bg_color">#FCB13E</color>
+    <color name="splash_bg_color">#FFEFD8</color>
 </resources>

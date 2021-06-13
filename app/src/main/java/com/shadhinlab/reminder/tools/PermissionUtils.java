@@ -1,4 +1,4 @@
-package com.shadhinlab.reminder.Tools;
+package com.shadhinlab.reminder.tools;
 
 import android.Manifest;
 import android.app.Activity;
@@ -11,7 +11,6 @@ import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;

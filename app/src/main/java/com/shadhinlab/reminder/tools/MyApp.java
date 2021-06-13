@@ -1,4 +1,4 @@
-package com.shadhinlab.reminder.Tools;
+package com.shadhinlab.reminder.tools;
 
 
 import android.app.Application;
