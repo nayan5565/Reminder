@@ -1,14 +1,18 @@
 package com.shadhinlab.reminder.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,11 +20,16 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.shadhinlab.reminder.R;
+import com.shadhinlab.reminder.models.MTime;
 import com.shadhinlab.reminder.tools.MyAlarmManager;
 import com.shadhinlab.reminder.tools.PermissionUtils;
 import com.shadhinlab.reminder.tools.Utils;
@@ -32,36 +41,70 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private int PERMISSION_ID = 44, LOCATION_SETTINGS = 1;
     private TextView tvFazarTime, tvDuhurTime, tvAsarTime, tvMagribTime, tvIshaTime;
+    private TextView tvSetFajrTime, tvSetDhuhrTime, tvSetAsrTime, tvSetMaghribTime, tvSetIshaTime;
     private MyDatabase myDatabase;
-
+    private MPrayerTime mPrayerTime;
+    private MTime mTime;
     private FusedLocationProviderClient mFusedLocationClient;
     private ProgressDialog myProgressBar;
     private MyAlarmManager myAlarmManager;
+    private LocationCallback mLocationCallback;
+
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        tvFazarTime = findViewById(R.id.tvFazarTime);
+        init();
+        clickListener();
+//        PermissionUtils.displayLocationSettingsRequest(this, this, PERMISSION_ID);
+        getCurrentPrayerTime();
+        getLocation();
+        locationCallBack();
+        long unixTime = System.currentTimeMillis() / 1000L;
+        Utils.log("unixTime: " + Utils.getMonth());
+        Utils.log("unixTime: " + Utils.getYear());
+
+//        myAlarmManager.setTestAlarm(0, 0, 10, 0, 123, "", false);
+    }
+
+    private void init() {
+        tvFazarTime = findViewById(R.id.tvFajrTime);
         tvIshaTime = findViewById(R.id.tvIshaTime);
-        tvDuhurTime = findViewById(R.id.tvDuhurTime);
-        tvAsarTime = findViewById(R.id.tvAsarTime);
-        tvMagribTime = findViewById(R.id.tvMagribTime);
+        tvDuhurTime = findViewById(R.id.tvDhuhrTime);
+        tvAsarTime = findViewById(R.id.tvAsrTime);
+        tvMagribTime = findViewById(R.id.tvMaghribTime);
+        tvSetFajrTime = findViewById(R.id.tvSetFajrTime);
+        tvSetDhuhrTime = findViewById(R.id.tvSetDhuhrTime);
+        tvSetAsrTime = findViewById(R.id.tvSetAsrTime);
+        tvSetMaghribTime = findViewById(R.id.tvSetMaghribTime);
+        tvSetIshaTime = findViewById(R.id.tvSetIshaTime);
         myProgressBar = new ProgressDialog(this);
         myDatabase = MyDatabase.getInstance(this);
         myAlarmManager = new MyAlarmManager(this);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-//        PermissionUtils.displayLocationSettingsRequest(this, this, PERMISSION_ID);
-        getLocation();
-        long unixTime = System.currentTimeMillis() / 1000L;
-        Utils.log("unixTime: " + Utils.getMonth());
-        Utils.log("unixTime: " + Utils.getYear());
-//        getPos();
-        myAlarmManager.setTestAlarm(0, 0, 10, 0, 123, "", false);
+        mPrayerTime = new MPrayerTime();
+        mTime = new MTime();
+    }
+
+    private void clickListener() {
+        tvSetFajrTime.setOnClickListener(this);
+        tvSetDhuhrTime.setOnClickListener(this);
+        tvSetAsrTime.setOnClickListener(this);
+        tvSetMaghribTime.setOnClickListener(this);
+        tvSetIshaTime.setOnClickListener(this);
+    }
+
+    private void display() {
+        tvFazarTime.setText(mTime.getFajr().split(" ")[0]);
+        tvDuhurTime.setText(mTime.getDhuhr().split(" ")[0]);
+        tvAsarTime.setText(mTime.getAsr().split(" ")[0]);
+        tvMagribTime.setText(mTime.getMaghrib().split(" ")[0]);
+        tvIshaTime.setText(mTime.getIsha().split(" ")[0]);
     }
 
 
@@ -74,9 +117,9 @@ public class MainActivity extends AppCompatActivity {
                 myProgressBar.dismiss();
                 Utils.log("onResponse");
                 myDatabase.myDao().savePrayerTimes(response.body());
-                MPrayerTime mPrayerTime = myDatabase.myDao().getPrayerTimes();
+                mPrayerTime = myDatabase.myDao().getPrayerTimes();
+                getCurrentPrayerTime();
                 Log.e("Data", "Is: " + mPrayerTime.getData().get(0).getDate().getReadable());
-                tvFazarTime.setText(mPrayerTime.getData().get(0).getDate().getReadable() + " " + mPrayerTime.getData().get(0).getTimings().getFajr().split(" ")[0]);
             }
 
             @Override
@@ -87,22 +130,63 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private int getPos() {
-        int pos = 0;
-        for (int i = 0; i < myDatabase.myDao().getPrayerTimes().getData().size(); i++) {
-            if (myDatabase.myDao().getPrayerTimes().getData().get(i).getDate().getReadable().equals(Utils.getDate())) {
-                pos = i;
-                Utils.log("Pos: " + myDatabase.myDao().getPrayerTimes().getData().get(i).getDate().getReadable());
-                Utils.log("Pos 2 : " + myDatabase.myDao().getPrayerTimes().getData().get(i).getTimings().getIsha());
+    private boolean getCurrentPrayerTime() {
+        if (myDatabase.myDao().getPrayerTimes() != null && myDatabase.myDao().getPrayerTimes().getData() != null && myDatabase.myDao().getPrayerTimes().getData().size() > 0) {
+            for (int i = 0; i < myDatabase.myDao().getPrayerTimes().getData().size(); i++) {
+                if (myDatabase.myDao().getPrayerTimes().getData().get(i).getDate().getReadable().equals(Utils.getDate())) {
+                    Utils.log("Pos: " + myDatabase.myDao().getPrayerTimes().getData().get(i).getDate().getReadable());
+                    Utils.log("Pos 2 : " + myDatabase.myDao().getPrayerTimes().getData().get(i).getTimings().getIsha());
+                    mTime = myDatabase.myDao().getPrayerTimes().getData().get(i).getTimings();
+                    display();
+                    return true;
+                }
             }
-        }
-        return pos;
 
+        }
+
+        return false;
+    }
+
+    private void requestNewLocationData() {
+
+        LocationRequest mLocationRequest = new LocationRequest();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(0);
+        mLocationRequest.setFastestInterval(0);
+        mLocationRequest.setNumUpdates(1);
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            Utils.log("requestNewLocationData");
+            return;
+        }
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+
+    }
+
+    private void locationCallBack() {
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                Location mLastLocation = locationResult.getLastLocation();
+                getSunriseTimeOther(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                Utils.log("onLocationResult Lat : " + mLastLocation.getLatitude() + " Lng : " + mLastLocation.getLongitude());
+            }
+        };
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void getLocation() {
-        Utils.log("getLocation");
+        myProgressBar.setMessage("Detect your location....");
+        myProgressBar.setCanceledOnTouchOutside(false);
+        myProgressBar.show();
         if (PermissionUtils.checkPermissions(this)) {
             Utils.log("checkPermissions");
             if (isLocationEnabled()) {
@@ -116,6 +200,7 @@ public class MainActivity extends AppCompatActivity {
                     // to handle the case where the user grants the permission. See the documentation
                     // for ActivityCompat#requestPermissions for more details.
                     Utils.log("getLocation 2");
+                    myProgressBar.dismiss();
                     return;
                 }
                 mFusedLocationClient.getLastLocation()
@@ -126,15 +211,20 @@ public class MainActivity extends AppCompatActivity {
                                 // Logic to handle location object
                                 getSunriseTimeOther(location.getLatitude(), location.getLongitude());
                                 Log.e("Location", "mFusedLocationClient Lat : " + location.getLatitude() + " Lng : " + location.getLongitude());
+                            }else {
+                                Utils.log("getLocation null");
+                                requestNewLocationData();
                             }
                         });
             } else {
                 Utils.log("isLocationEnabled else");
+                myProgressBar.dismiss();
                 PermissionUtils.displayLocationSettingsRequest(MainActivity.this, this, LOCATION_SETTINGS);
             }
 
         } else {
             Utils.log("requestPermissions");
+            myProgressBar.dismiss();
             PermissionUtils.requestPermissions(this, PERMISSION_ID);
         }
 
@@ -191,4 +281,25 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.tvSetFajrTime:
+                startActivity(new Intent(this, SetReminderActivity.class).putExtra("PrayerWakto", 1).putExtra("PrayerTime", mTime.getFajr().split(" ")[0]));
+                break;
+            case R.id.tvSetDhuhrTime:
+                startActivity(new Intent(this, SetReminderActivity.class).putExtra("PrayerWakto", 2).putExtra("PrayerTime", mTime.getDhuhr().split(" ")[0]));
+                break;
+            case R.id.tvSetAsrTime:
+                startActivity(new Intent(this, SetReminderActivity.class).putExtra("PrayerWakto", 3).putExtra("PrayerTime", mTime.getAsr().split(" ")[0]));
+                break;
+            case R.id.tvSetMaghribTime:
+                startActivity(new Intent(this, SetReminderActivity.class).putExtra("PrayerWakto", 4).putExtra("PrayerTime", mTime.getMaghrib().split(" ")[0]));
+                break;
+            case R.id.tvSetIshaTime:
+                startActivity(new Intent(this, SetReminderActivity.class).putExtra("PrayerWakto", 5).putExtra("PrayerTime", mTime.getIsha().split(" ")[0]));
+                break;
+        }
+    }
 }

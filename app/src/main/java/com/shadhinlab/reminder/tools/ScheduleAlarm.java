@@ -1,8 +1,6 @@
 package com.shadhinlab.reminder.tools;
 
-import android.app.Activity;
 import android.content.Context;
-import android.text.TextUtils;
 
 
 import com.shadhinlab.reminder.db.MyDatabase;
@@ -10,9 +8,8 @@ import com.shadhinlab.reminder.models.MAlarm;
 import com.shadhinlab.reminder.models.MRepeatAlarm;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
-
-import static com.shadhinlab.reminder.tools.Utils.calculateDate;
 
 
 public class ScheduleAlarm {
@@ -31,56 +28,32 @@ public class ScheduleAlarm {
         mRepeatAlarms = new ArrayList<>();
         myDatabase = MyDatabase.getInstance(MyApp.getInstance().getContext());
         alarmList = myDatabase.myDao().getAlarmDetails();
+        nextAllAlarm();
 
+    }
+
+    public void nextAllAlarm() {
+        alarmList = myDatabase.myDao().getAlarmDetails();
         if (alarmList.size() > 0) {
             for (int i = 0; i < alarmList.size(); i++) {
-                if (alarmList.get(i).getAlarmDateTime().before(Utils.getDateTime(Utils.getTodaysDateTime()))) {
-                    Utils.log("Past date pos : " + i);
-                    mRepeatAlarms = myDatabase.myDao().getRepeatAlarmDetails(alarmList.get(i).getId());
-                    if (mRepeatAlarms.size() > 0) {
-                        int alarmDay = 0;
-                        for (MRepeatAlarm mRepeatAlarm : mRepeatAlarms) {
-                            if (mRepeatAlarm.isDay()) {
-                                alarmDay++;
-                                if (mRepeatAlarm.getAlarmDateTime().before(Utils.getDateTime(Utils.getTodaysDateTime()))) {
-                                    mRepeatAlarm.setAlarmDateTime(calculateDate(mRepeatAlarm.getTag(), mRepeatAlarm.getHour(), mRepeatAlarm.getMinute()));
-                                    myDatabase.myDao().saveRepeatAlarmDetails(mRepeatAlarm);
-                                }
-                                MAlarm mAlarm = alarmList.get(i);
-                                mAlarm.setId(mAlarm.getId());
-                                mAlarm.setAlarmDateTime(myDatabase.myDao().getRepeatedAlarmDetails(true, mAlarm.getId()).get(0).getAlarmDateTime());
-                                mAlarm.setLongAlarmTime(myDatabase.myDao().getRepeatedAlarmDetails(true, mAlarm.getId()).get(0).getAlarmDateTime().getTime());
-                                myDatabase.myDao().saveAlarmDetails(mAlarm);
-                                Utils.log("has repeat " + myDatabase.myDao().getRepeatedAlarmDetails(true, mAlarm.getId()).get(0).getAlarmDateTime());
-                            }
-                        }
-                        Utils.log("Complete Repeat loop : " + alarmDay);
-                        if (alarmDay == 0) {
-                            myAlarmManager.cancelAlarm(alarmList.get(i).getPendingID());
-                            myDatabase.myDao().deleteRepeatAlarmDetails(alarmList.get(i).getId());
-                            myDatabase.myDao().deleteAlarmDetailsByDate(Utils.getDateTime(Utils.getTodaysDateTime()));
-                        }
-
-                    } else {
-                        myAlarmManager.cancelAlarm(alarmList.get(i).getPendingID());
-                        myDatabase.myDao().deleteAlarmDetailsByDate(Utils.getDateTime(Utils.getTodaysDateTime()));
-                    }
-
-                }
+                if (alarmList.get(i).isBeforeAlarm())
+                    myAlarmManager.setNextDayAlarmPrayer(alarmList.get(i).getHour(), alarmList.get(i).getMin(), alarmList.get(i).getBeforePrayerTime(), alarmList.get(i).getPrayerWakto(), 123, "", true, true);
+                else
+                    myAlarmManager.setNextDayAlarmPrayer(alarmList.get(i).getHour(), alarmList.get(i).getMin(), alarmList.get(i).getAfterPrayerTime(), alarmList.get(i).getPrayerWakto(), 123, "", false, true);
             }
-
         }
 
     }
 
-    public void nextAlarm() {
-        alarmList = myDatabase.myDao().getAlarmDetails();
+    public void nextWaktoAlarm(int prayerWakto) {
+        alarmList = myDatabase.myDao().getAlarmByWakto(prayerWakto);
         if (alarmList.size() > 0) {
-            MAlarm mAlarm = alarmList.get(0);
-            mRepeatAlarms = myDatabase.myDao().getRepeatedAlarmDetails(true, mAlarm.getId());
-            if (mRepeatAlarms.size() > 0) {
-                MRepeatAlarm mRepeatAlarm = mRepeatAlarms.get(0);
-                myAlarmManager.setAlarmRepeatWeekly(mRepeatAlarm.getTag(), mRepeatAlarm.getHour(), mRepeatAlarm.getMinute(), 0, mRepeatAlarm.getPendingID(), "", true, mAlarm.getId());
+            for (int i = 0; i < alarmList.size(); i++) {
+                if (alarmList.get(i).isBeforeAlarm())
+                    myAlarmManager.setNextDayAlarmPrayer(alarmList.get(i).getHour(), alarmList.get(i).getMin(), alarmList.get(i).getBeforePrayerTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", true, true);
+                else
+                    myAlarmManager.setNextDayAlarmPrayer(alarmList.get(i).getHour(), alarmList.get(i).getMin(), alarmList.get(i).getAfterPrayerTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", false, true);
+                saveDb(alarmList.get(0), alarmList.get(i).getHour(), alarmList.get(i).getMin());
             }
         }
 
@@ -98,38 +71,25 @@ public class ScheduleAlarm {
 //        else Utils.showToast("Already started snooze");
     }
 
+    private void saveDb(MAlarm alarm, int hour, int minute) {
+        MAlarm mAlarm = new MAlarm();
+        mAlarm.setBeforePrayerTime(alarm.getBeforePrayerTime());
+        mAlarm.setAfterPrayerTime(alarm.getAfterPrayerTime());
+        mAlarm.setPrayerWakto(alarm.getPrayerWakto());
+        mAlarm.setBeforeAlarm(alarm.isBeforeAlarm());
+        mAlarm.setHour(hour);
+        mAlarm.setMin(minute);
+        mAlarm.setPendingID(alarm.getPendingID());
+        mAlarm.setLongAlarmTime(myAlarmManager.alarmTimeLong);
+        mAlarm.setPickTime(alarm.getPickTime());
+    }
+
+
     public void cancelAlarm(MAlarm mAlarm) {
         String nameOfDay = "", alarmDays = "";
         if (mAlarm != null) {
             mRepeatAlarms = myDatabase.myDao().getRepeatedAlarmDetails(true, mAlarm.getId());
-            if (mRepeatAlarms.size() > 0) {
-                MRepeatAlarm mRepeatAlarm = mRepeatAlarms.get(0);
-                myAlarmManager.cancelAlarm(mRepeatAlarm.getPendingID());
-                mRepeatAlarm.setDay(false);
-                myDatabase.myDao().saveRepeatAlarmDetails(mRepeatAlarm);
-                mRepeatAlarms = myDatabase.myDao().getRepeatedAlarmDetails(true, mAlarm.getId());
-                if (mRepeatAlarms.size() < 1) {
-                    myAlarmManager.cancelAlarm(mAlarm.getPendingID());
-                    myDatabase.myDao().deleteAlarmDetails(mAlarm.getId());
-                } else {
-                    for (MRepeatAlarm mRepeatAlarm1 : mRepeatAlarms) {
-                        if (mRepeatAlarm1.isDay())
-                            nameOfDay = nameOfDay.concat(mRepeatAlarm1.getDay() + ", ");
-
-                    }
-                    if (!TextUtils.isEmpty(nameOfDay))
-                        alarmDays = nameOfDay.substring(0, nameOfDay.lastIndexOf(","));
-                    mAlarm.setId(mAlarm.getId());
-                    mAlarm.setNoOfDays(mAlarm.getNoOfDays() - 1);
-                    mAlarm.setDays(alarmDays);
-                    mAlarm.setAlarmDateTime(mRepeatAlarms.get(0).getAlarmDateTime());
-                    mAlarm.setLongAlarmTime(mRepeatAlarms.get(0).getAlarmDateTime().getTime());
-                    myDatabase.myDao().saveAlarmDetails(mAlarm);
-                }
-            } else {
-                myAlarmManager.cancelAlarm(mAlarm.getPendingID());
-                myDatabase.myDao().deleteAlarmDetails(mAlarm.getId());
-            }
+            myAlarmManager.cancelAlarm(mAlarm.getPendingID());
         }
 
     }

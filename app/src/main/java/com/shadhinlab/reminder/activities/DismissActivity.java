@@ -37,7 +37,7 @@ public class DismissActivity extends AppCompatActivity implements RingtonePlayer
     private RingtonePlayer ringtonePlayer;
     private String contentValue = "";
     private VibratePlayer vibrator;
-    private int pendingId, alarmNumber, alarmID;
+    private int pendingId, alarmNumber, alarmID, prayerWakto;
     private MyAlarmManager myAlarmManager;
     private ScheduleAlarm scheduleAlarm;
     private ConfirmationPopup confirmationPopup;
@@ -61,7 +61,7 @@ public class DismissActivity extends AppCompatActivity implements RingtonePlayer
 
         init();
         scheduleAlarm.alarmAnalysis();
-        fireAlarmPopup = new FireAlarmPopup(this, contentValue, 0) {
+        fireAlarmPopup = new FireAlarmPopup(this, contentValue, 1) {
             @Override
             protected void onButtonClick(View view) {
                 if (view.getId() == R.id.tvSnooze) {
@@ -88,10 +88,11 @@ public class DismissActivity extends AppCompatActivity implements RingtonePlayer
                 if (view.getId() == R.id.tvYes) {
                     if (Utils.getPrefBoolean(Global.SNOOZE_ENABLE, true)) {
                         Utils.savePrefBoolean(Global.SNOOZE_START_ALREADY, false);
-                        myAlarmManager.cancelAlarm(123);
+                        myAlarmManager.cancelAlarm(pendingId);
                     }
 
-                    scheduleAlarm.cancelAlarm(myDatabase.myDao().getAlarmDetails(alarmID));
+//                    scheduleAlarm.cancelAlarm(myDatabase.myDao().getAlarmDetails(alarmID));
+                    scheduleAlarm.nextWaktoAlarm(prayerWakto);
                     ringtonePlayer.stop();
                     vibrator.stopVibrate();
                     fireAlarmPopup.dismiss();
@@ -105,8 +106,8 @@ public class DismissActivity extends AppCompatActivity implements RingtonePlayer
 
         ringtonePlayer.start();
         vibrator.vibrateStart();
-        scheduleAlarm.snoozeAlarm(pendingId, contentValue);
-        snoozeLogic();
+
+//        snoozeLogic();
     }
 
     private void init() {
@@ -117,8 +118,9 @@ public class DismissActivity extends AppCompatActivity implements RingtonePlayer
         if (!TextUtils.isEmpty(contentValue))
             Utils.savePref(Global.SNOOZE_CONTENT_TEXT, contentValue);
         pendingId = getIntent().getIntExtra("PendingId", 0);
+        prayerWakto = getIntent().getIntExtra("PrayerWakto", 0);
         alarmID = getIntent().getIntExtra("AlarmID", 0);
-        alarmNumber = Utils.getPref(Global.SNOOZE_REPEAT, 3);
+        alarmNumber = Utils.getPref(Global.SNOOZE_REPEAT, 1);
 //        alarmNumber = getIntent().getIntExtra(pendingId + "", 0);
         Utils.log("Content : " + contentValue + " pendingId : " + pendingId + " alarmNumber : " + alarmNumber + " AlarmID : " + alarmID);
 
@@ -132,6 +134,7 @@ public class DismissActivity extends AppCompatActivity implements RingtonePlayer
     }
 
     private void snoozeLogic() {
+        scheduleAlarm.snoozeAlarm(pendingId, contentValue);
         if (Utils.getPrefBoolean(Global.SNOOZE_ENABLE, true)) {
             if (alarmNumber > 0) {
                 numberOfAlreadyRangAlarms = sharPrefHelper.getNumberOfAlreadyRangAlarms() + 1;
@@ -141,7 +144,7 @@ public class DismissActivity extends AppCompatActivity implements RingtonePlayer
                 if (numberOfAlreadyRangAlarms >= alarmNumber) {
                     Utils.savePrefBoolean(Global.SNOOZE_START_ALREADY, false);
                     Utils.log("Alarm Over");
-                    myAlarmManager.cancelAlarm(123);
+                    myAlarmManager.cancelAlarm(pendingId);
                     sharPrefHelper.setNumberOfAlreadyRangAlarms(0);
                 }
             }
@@ -152,6 +155,7 @@ public class DismissActivity extends AppCompatActivity implements RingtonePlayer
 
     @Override
     public void onPlayerFinished() {
+        scheduleAlarm.nextWaktoAlarm(prayerWakto);
         fireAlarmPopup.dismiss();
         finish();
     }

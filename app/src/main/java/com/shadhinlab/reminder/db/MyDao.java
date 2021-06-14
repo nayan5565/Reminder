@@ -28,6 +28,9 @@ public interface MyDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long saveAlarmDetails(MAlarm alarm);
 
+    @Query("select * from alarm_list where prayerWakto=:prayerWakto")
+    List<MAlarm> getAlarmByWakto(int prayerWakto);
+
     @Query("select * from alarm_list order by alarmDateTime asc")
     List<MAlarm> getAlarmDetails();
 

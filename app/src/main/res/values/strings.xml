@@ -45,7 +45,8 @@
     <string name="set_alarm">Set Alarm</string>
     <string name="set">Set</string>
     <string name="all_days">Every day</string>
-    <string name="alarm_before_sunrise">Time before sunrise</string>
+    <string name="alarm_before">Time before Prayer</string>
+    <string name="alarm_after">Time After Prayer</string>
     <string name="no_alarm_set">No alarm set</string>
     <string name="dismiss_title">Dismiss</string>
     <string name="no_alarm">There is no  </string>

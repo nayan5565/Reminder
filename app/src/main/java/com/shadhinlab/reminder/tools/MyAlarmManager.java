@@ -52,12 +52,12 @@ public class MyAlarmManager {
         Log.e("Time", "Calendar " + calendar.getTime() + " long : " + calendar.getTime().getTime() + " pendingId : " + pendingId);
     }
 
-    public void setSingleAlarm(int day, int hour, int min, int pickTime, int intentId, String contentValue, boolean isEdit) {
+    public void setSingleAlarm(int hour, int min, int pickTime, int prayerWakto, int intentId, String contentValue, boolean isBefore, boolean isEdit) {
         Calendar calendar = Calendar.getInstance();
-//        calendar.set(Calendar.DAY_OF_WEEK, day);
-        //calendar.add(Calendar.DAY_OF_WEEK,Calendar.FRIDAY);
         calendar.set(Calendar.HOUR_OF_DAY, hour);
-        calendar.set(Calendar.MINUTE, min - pickTime);
+        if (isBefore)
+            calendar.set(Calendar.MINUTE, min - pickTime);
+        else calendar.set(Calendar.MINUTE, min + pickTime);
         calendar.set(Calendar.SECOND, 0);
 
         //Add a day if alarm is set for before current time, so the alarm is triggered the next day
@@ -90,7 +90,7 @@ public class MyAlarmManager {
 //        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTime().getTime(), pendingIntent);
 
 //        AlarmManager alarmManager = (AlarmManager) activity.getSystemService(ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTimeLong, pendingIntent(pendingId, contentValue));
+        alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTimeLong, pendingIntent(pendingId, prayerWakto, contentValue));
 
 
 //        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 7 * 24 * 3600 * 1000, pendingIntent);
@@ -100,7 +100,35 @@ public class MyAlarmManager {
 //        SetAlarmRepeating(alarmTimeLong, pendingId);
     }
 
-    public void setAlarmDateWise(int day, int hour, int min, int pickTime, int intentId, String contentValue, boolean isEdit) {
+
+    public void setNextDayAlarmPrayer(int hour, int min, int pickTime, int prayerWakto, int intentId, String contentValue, boolean isBefore, boolean isEdit) {
+        Calendar calendar = Calendar.getInstance();
+        //for next day
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        if (isBefore)
+            calendar.set(Calendar.MINUTE, min - pickTime);
+        else calendar.set(Calendar.MINUTE, min + pickTime);
+        calendar.set(Calendar.SECOND, 0);
+
+        alarmTimeLong = calendar.getTime().getTime();
+        if (isEdit) {
+            pendingId = intentId;
+            hours = hour;
+            minutes = min;
+        } else {
+            hours = calendar.get(Calendar.HOUR_OF_DAY);
+            minutes = calendar.get(Calendar.MINUTE);
+            pendingId = (int) calendar.getTime().getTime();
+        }
+
+        Log.e("Alarm next day", "Calendar " + calendar.getTime() + " long : " + calendar.getTime().getTime() + " pendingId : " + pendingId);
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTimeLong, pendingIntent(pendingId, prayerWakto, contentValue));
+
+    }
+
+    public void setAlarmDateWise(int day, int hour, int min, int pickTime, int prayerWakto, int intentId, String contentValue, boolean isEdit) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_WEEK, day);
 //        calendar.add(Calendar.DAY_OF_WEEK,Calendar.FRIDAY);
@@ -133,7 +161,7 @@ public class MyAlarmManager {
         Utils.log("Set Alarm " + calendar.getTime() + " long : " + calendar.getTime().getTime() + " pendingId : " + pendingId);
 
 //        AlarmManager alarmManager = (AlarmManager) activity.getSystemService(ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTimeLong, pendingIntent(pendingId, contentValue));
+        alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTimeLong, pendingIntent(pendingId, prayerWakto, contentValue));
     }
 
     public void setAlarmRepeatWeekly(int day, int hour, int min, int pickTime, int intentId, String contentValue, boolean isEdit, int alarmID) {
@@ -175,7 +203,7 @@ public class MyAlarmManager {
 
     }
 
-    public void setTestAlarm(int day, int hour, int min, int pickTime, int intentId, String contentValue, boolean isEdit) {
+    public void setTestAlarm(int day, int hour, int min, int pickTime, int prayerWakto, int intentId, String contentValue, boolean isEdit) {
         Calendar calendar = Calendar.getInstance();
 //        calendar.set(Calendar.DAY_OF_WEEK, day);
 //        calendar.set(Calendar.HOUR_OF_DAY, hour);
@@ -195,7 +223,7 @@ public class MyAlarmManager {
 
         Utils.log("Set Alarm " + calendar.getTime() + " long : " + calendar.getTime().getTime() + " pendingId : " + pendingId);
 
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, alarmTimeLong, intervalMinutes, pendingIntent(pendingId, contentValue));
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, alarmTimeLong, intervalMinutes, pendingIntent(pendingId, prayerWakto, contentValue));
 
 
     }
@@ -257,7 +285,7 @@ public class MyAlarmManager {
 
     }
 
-    public void setSnooze(int hour, int min, int intentId, int snooze, int alarmNumber,String dialogText) {
+    public void setSnooze(int hour, int min, int intentId, int snooze, int alarmNumber, String dialogText) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, min);
@@ -320,11 +348,12 @@ public class MyAlarmManager {
     }
 
 
-    private PendingIntent pendingIntent(int id, String content) {
+    private PendingIntent pendingIntent(int id, int prayerWakto, String content) {
         Intent intent = new Intent(activity, MyBroadcastReceiver.class);
         intent.putExtra("ContentValue", content);
 //        intent.putExtra(id + "", 0);
         intent.putExtra("PendingId", id);
+        intent.putExtra("PrayerWakto", prayerWakto);
         return PendingIntent.getBroadcast(activity.getApplicationContext(), id, intent, PendingIntent.FLAG_UPDATE_CURRENT | Intent.FILL_IN_DATA);
     }
 

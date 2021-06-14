@@ -15,7 +15,7 @@ public class DeviceBootReceiver extends BroadcastReceiver {
             if ("android.intent.action.BOOT_COMPLETED".equals(intent.getAction())) {
                 scheduleAlarm = new ScheduleAlarm(context);
                 scheduleAlarm.alarmAnalysis();
-                scheduleAlarm.nextAlarm();
+                scheduleAlarm.nextAllAlarm();
             }
         }
     }

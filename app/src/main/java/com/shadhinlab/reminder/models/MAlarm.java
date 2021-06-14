@@ -9,11 +9,44 @@ import java.util.Date;
 public class MAlarm {
     @PrimaryKey(autoGenerate = true)
     private int id;
-    private int beforeSunriseTime, pendingID, hour, min, noOfDays;
+    private int beforePrayerTime, afterPrayerTime, pendingID, hour, min, prayerWakto;
     private long longAlarmTime;
-    private String alarmTime, alarmDate, pickTime, alarmDateTimes, days, alarmName, dialogText;
+    private String alarmName, dialogText,pickTime;
     private Date alarmDateTime;
-    private boolean isStopAlarm, isLongClick, isVibrate;
+    private boolean isStopAlarm, isLongClick, isVibrate, isBeforeAlarm;
+
+    public String getPickTime() {
+        return pickTime;
+    }
+
+    public void setPickTime(String pickTime) {
+        this.pickTime = pickTime;
+    }
+
+    public boolean isBeforeAlarm() {
+        return isBeforeAlarm;
+    }
+
+    public void setBeforeAlarm(boolean beforeAlarm) {
+        isBeforeAlarm = beforeAlarm;
+    }
+
+
+    public int getAfterPrayerTime() {
+        return afterPrayerTime;
+    }
+
+    public void setAfterPrayerTime(int afterPrayerTime) {
+        this.afterPrayerTime = afterPrayerTime;
+    }
+
+    public int getPrayerWakto() {
+        return prayerWakto;
+    }
+
+    public void setPrayerWakto(int prayerWakto) {
+        this.prayerWakto = prayerWakto;
+    }
 
     public String getDialogText() {
         return dialogText;
@@ -39,21 +72,6 @@ public class MAlarm {
         this.alarmName = alarmName;
     }
 
-    public int getNoOfDays() {
-        return noOfDays;
-    }
-
-    public void setNoOfDays(int noOfDays) {
-        this.noOfDays = noOfDays;
-    }
-
-    public String getDays() {
-        return days;
-    }
-
-    public void setDays(String days) {
-        this.days = days;
-    }
 
     public boolean isLongClick() {
         return isLongClick;
@@ -103,21 +121,6 @@ public class MAlarm {
         this.pendingID = pendingID;
     }
 
-    public String getAlarmDateTimes() {
-        return alarmDateTimes;
-    }
-
-    public void setAlarmDateTimes(String alarmDateTimes) {
-        this.alarmDateTimes = alarmDateTimes;
-    }
-
-    public String getPickTime() {
-        return pickTime;
-    }
-
-    public void setPickTime(String pickTime) {
-        this.pickTime = pickTime;
-    }
 
     public Date getAlarmDateTime() {
         return alarmDateTime;
@@ -135,27 +138,12 @@ public class MAlarm {
         this.id = id;
     }
 
-    public int getBeforeSunriseTime() {
-        return beforeSunriseTime;
+    public int getBeforePrayerTime() {
+        return beforePrayerTime;
     }
 
-    public void setBeforeSunriseTime(int beforeSunriseTime) {
-        this.beforeSunriseTime = beforeSunriseTime;
+    public void setBeforePrayerTime(int beforePrayerTime) {
+        this.beforePrayerTime = beforePrayerTime;
     }
 
-    public String getAlarmTime() {
-        return alarmTime;
-    }
-
-    public void setAlarmTime(String alarmTime) {
-        this.alarmTime = alarmTime;
-    }
-
-    public String getAlarmDate() {
-        return alarmDate;
-    }
-
-    public void setAlarmDate(String alarmDate) {
-        this.alarmDate = alarmDate;
-    }
 }

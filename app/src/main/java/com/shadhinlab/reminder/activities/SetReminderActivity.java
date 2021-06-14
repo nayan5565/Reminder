@@ -3,7 +3,6 @@ package com.shadhinlab.reminder.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -26,9 +25,10 @@ import java.util.List;
 
 public class SetReminderActivity extends AppCompatActivity implements RingtonePlayer.OnFinishListener {
     public static MAlarm updateAlarm;
-    private int pickTime, alarmSize = 0, separatedHourSR, separateMinSR;
+    private int pickBeforeTime, pickAfterTime, alarmSize = 0, prayerWakto;
+    private String prayerTime = "";
     private List<MAlarm> alarmList;
-    private SeekBar seekbar;
+    private SeekBar seekbar, seekbarAfter;
     private MyDatabase myDatabase;
     private Button btnSetAlarm, btnTestAlarm;
     private MyAlarmManager myAlarmManager;
@@ -38,24 +38,32 @@ public class SetReminderActivity extends AppCompatActivity implements RingtonePl
     private VibratePlayer vibratePlayer;
     private FireAlarmPopup fireAlarmPopup;
     private ConfirmationPopup confirmationPopup;
-    private TextView tvPickingTime;
+    private TextView tvPickingTime, tvPickingAfterTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_reminder);
         init();
+        seekbarSetup();
+
     }
 
     private void init() {
+        prayerWakto = getIntent().getIntExtra("PrayerWakto", 0);
+        prayerTime = getIntent().getStringExtra("PrayerTime");
+        Utils.log("Intent: " + prayerWakto);
+        Utils.log("Intent time: " + prayerTime.split(":")[0]);
         myAlarmManager = new MyAlarmManager(this);
         myDatabase = MyDatabase.getInstance(this);
         alarmList = myDatabase.myDao().getAlarmDetails();
         tvPickingTime = findViewById(R.id.tvPickingTime);
+        tvPickingAfterTime = findViewById(R.id.tvPickingAfterTime);
         btnSetAlarm = findViewById(R.id.btnSetAlarm);
         btnTestAlarm = findViewById(R.id.btnTestAlarm);
 
         seekbar = findViewById(R.id.seekbar);
+        seekbarAfter = findViewById(R.id.seekbarAfter);
 
         btnSetAlarm.setOnClickListener(view -> clickSetAlarm());
 
@@ -113,25 +121,55 @@ public class SetReminderActivity extends AppCompatActivity implements RingtonePl
 
 
     private void clickSetAlarm() {
-        cancelAlarm();
-        createAlarm(12, 10);
+//        cancelAlarm();
+        if (pickBeforeTime > 5)
+            createBeforeAlarm(Integer.parseInt(prayerTime.split(":")[0]), Integer.parseInt(prayerTime.split(":")[1]));
+        if (pickAfterTime > 5)
+            createAfterAlarm(Integer.parseInt(prayerTime.split(":")[0]), Integer.parseInt(prayerTime.split(":")[1]));
     }
 
     private void seekbarSetup() {
-        if (pickTime > 0) {
-            tvPickingTime.setText(pickTime + " Minutes");
-            int pickTime2 = pickTime / 5;
+        if (pickBeforeTime > 0) {
+            tvPickingTime.setText(pickBeforeTime + " Minutes");
+            int pickTime2 = pickBeforeTime / 5;
             seekbar.setProgress(pickTime2);
         } else {
-            tvPickingTime.setText(pickTime + " Minutes");
-            seekbar.setProgress(pickTime);
+            tvPickingTime.setText(pickBeforeTime + " Minutes");
+            seekbar.setProgress(pickBeforeTime);
         }
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                pickTime = progress / 5;
-                pickTime = progress * 5;
-                tvPickingTime.setText(pickTime + " Minutes");
+                pickBeforeTime = progress / 5;
+                pickBeforeTime = progress * 5;
+                tvPickingTime.setText(pickBeforeTime + " Minutes");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        if (pickAfterTime > 0) {
+            tvPickingAfterTime.setText(pickAfterTime + " Minutes");
+            int pickTime2 = pickBeforeTime / 5;
+            seekbarAfter.setProgress(pickTime2);
+        } else {
+            tvPickingAfterTime.setText(pickAfterTime + " Minutes");
+            seekbar.setProgress(pickBeforeTime);
+        }
+        seekbarAfter.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                pickAfterTime = progress / 5;
+                pickAfterTime = progress * 5;
+                tvPickingAfterTime.setText(pickAfterTime + " Minutes");
             }
 
             @Override
@@ -146,10 +184,36 @@ public class SetReminderActivity extends AppCompatActivity implements RingtonePl
         });
     }
 
-    private void createAlarm(int hour, int minute) {
-        String pickTimes = Utils.getTimeConverter(Utils.timeCalculate(hour, minute, pickTime));
-        myAlarmManager.setSingleAlarm(Calendar.FRIDAY, hour, minute, pickTime, updateAlarm.getPendingID(), "", false);
+    private void createBeforeAlarm(int hour, int minute) {
+        String pickTimes = Utils.getTimeConverter(Utils.timeCalculate(hour, minute, pickBeforeTime));
+        Utils.log("pickTimes: " + pickTimes);
+        myAlarmManager.setSingleAlarm(hour, minute, pickBeforeTime, prayerWakto, 123, "", true, false);
+//        myAlarmManager.setSingleAlarm(Calendar.FRIDAY, hour, minute, pickBeforeTime, updateAlarm.getPendingID(), "", false);
+        saveDb(hour, minute, pickTimes, true);
+
     }
+
+    private void createAfterAlarm(int hour, int minute) {
+        String pickTimes = Utils.getTimeConverter(Utils.timeCalculate(hour, minute, pickAfterTime));
+        Utils.log("pickAfterTimes: " + pickTimes);
+        myAlarmManager.setSingleAlarm(hour, minute, pickAfterTime, prayerWakto, 123, "", false, false);
+        myAlarmManager.setNextDayAlarmPrayer(hour, minute, pickAfterTime, prayerWakto, 123, "", false, false);
+        saveDb(hour, minute, pickTimes, false);
+    }
+
+    private void saveDb(int hour, int minute, String pickTimes, boolean isBefore) {
+        mAlarm = new MAlarm();
+        mAlarm.setBeforePrayerTime(pickBeforeTime);
+        mAlarm.setAfterPrayerTime(pickAfterTime);
+        mAlarm.setPrayerWakto(prayerWakto);
+        mAlarm.setBeforeAlarm(isBefore);
+        mAlarm.setHour(hour);
+        mAlarm.setMin(minute);
+        mAlarm.setPendingID(myAlarmManager.pendingId);
+        mAlarm.setLongAlarmTime(myAlarmManager.alarmTimeLong);
+        mAlarm.setPickTime(pickTimes);
+    }
+
 
     private boolean isAlreadyPickTime(String pickTimes) {
         if (alarmList.size() > 0) {
@@ -163,27 +227,6 @@ public class SetReminderActivity extends AppCompatActivity implements RingtonePl
         return false;
     }
 
-    private boolean isAlreadyPickedDayTime(String pickTimes) {
-        String alarmDays = "";
-        String[] separatedDay = alarmDays.trim().split(",");
-
-        if (separatedDay.length > 0) {
-
-            for (int k = 0; k < separatedDay.length; k++) {
-                Utils.log("separatedDay : " + separatedDay[k]);
-                if (alarmList.size() > 0) {
-                    for (int i = 0; i < alarmList.size(); i++) {
-                        if (alarmList.get(i).getDays().contains(separatedDay[k].trim()) && alarmList.get(i).getPickTime().equals(pickTimes)) {
-                            Utils.log("days : " + alarmList.get(i).getDays() + " getPickTime : " + alarmList.get(i).getPickTime());
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
 
     @Override
     protected void onPause() {

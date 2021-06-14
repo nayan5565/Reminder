@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/dp20"
-        android:text="@string/alarm_before_sunrise"
+        android:text="@string/alarm_before"
         android:textColor="@color/text_color_active_bold"
         android:textSize="@dimen/sp18"
         app:layout_constraintStart_toStartOf="parent"
@@ -51,6 +51,42 @@
         android:layout_marginEnd="@dimen/dp20"
         android:background="#D0E3EF"
         app:layout_constraintTop_toBottomOf="@id/tvPickingTime" />
+
+    <TextView
+        android:id="@+id/tvTitleAfter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dp20"
+        android:text="@string/alarm_after"
+        android:textColor="@color/text_color_active_bold"
+        android:textSize="@dimen/sp18"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvLine" />
+
+    <SeekBar
+        android:id="@+id/seekbarAfter"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp5"
+        android:layout_marginTop="@dimen/dp10"
+        android:layout_marginEnd="@dimen/dp5"
+        android:max="24"
+        android:theme="@style/MySeekBar"
+        android:thumb="@drawable/thumb"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitleAfter" />
+
+    <TextView
+        android:id="@+id/tvPickingAfterTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp10"
+        android:layout_marginEnd="@dimen/dp20"
+        android:textColor="@color/colorAccent"
+        android:textSize="@dimen/sp18"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/seekbarAfter" />
 
     <Button
         android:id="@+id/btnTestAlarm"
