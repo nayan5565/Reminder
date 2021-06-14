@@ -25,11 +25,12 @@ public interface MyDao {
     @Query("select * from prayer_times")
     MPrayerTime getPrayerTimes();
 
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long saveAlarmDetails(MAlarm alarm);
 
-    @Query("select * from alarm_list where prayerWakto=:prayerWakto")
-    List<MAlarm> getAlarmByWakto(int prayerWakto);
+    @Query("select * from alarm_list where prayerWakto=:prayerWakto AND pendingID=:pendingId")
+    List<MAlarm> getAlarmByWakto(int prayerWakto, int pendingId);
 
     @Query("select * from alarm_list order by alarmDateTime asc")
     List<MAlarm> getAlarmDetails();

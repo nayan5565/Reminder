@@ -47,6 +47,13 @@ public class Utils {
         return dateFormat.format(date);
     }
 
+    public static String getTomorrowDate() {
+        DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_YEAR, 1);
+        return dateFormat.format(cal.getTime());
+    }
+
     public static int getMonth() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM", Locale.getDefault());
         Date date = new Date();

@@ -46,13 +46,14 @@ public class SetReminderActivity extends AppCompatActivity implements RingtonePl
         setContentView(R.layout.activity_set_reminder);
         init();
         seekbarSetup();
-
+        myAlarmManager.setSingleAlarm(16, 23, 3, prayerWakto, 123, "", false, false);
     }
 
     private void init() {
         prayerWakto = getIntent().getIntExtra("PrayerWakto", 0);
         prayerTime = getIntent().getStringExtra("PrayerTime");
-        Utils.log("Intent: " + prayerWakto);
+
+        Utils.log("PrayerWakto init: " + prayerWakto);
         Utils.log("Intent time: " + prayerTime.split(":")[0]);
         myAlarmManager = new MyAlarmManager(this);
         myDatabase = MyDatabase.getInstance(this);
@@ -195,7 +196,7 @@ public class SetReminderActivity extends AppCompatActivity implements RingtonePl
 
     private void createAfterAlarm(int hour, int minute) {
         String pickTimes = Utils.getTimeConverter(Utils.timeCalculate(hour, minute, pickAfterTime));
-        Utils.log("pickAfterTimes: " + pickTimes);
+        Utils.log("createAfterAlarm: " + prayerWakto);
         myAlarmManager.setSingleAlarm(hour, minute, pickAfterTime, prayerWakto, 123, "", false, false);
         myAlarmManager.setNextDayAlarmPrayer(hour, minute, pickAfterTime, prayerWakto, 123, "", false, false);
         saveDb(hour, minute, pickTimes, false);
@@ -212,6 +213,12 @@ public class SetReminderActivity extends AppCompatActivity implements RingtonePl
         mAlarm.setPendingID(myAlarmManager.pendingId);
         mAlarm.setLongAlarmTime(myAlarmManager.alarmTimeLong);
         mAlarm.setPickTime(pickTimes);
+        myDatabase.myDao().saveAlarmDetails(mAlarm);
+        List<MAlarm> alarmList = myDatabase.myDao().getAlarmByWakto(prayerWakto, myAlarmManager.pendingId);
+        Utils.log("Alarm size: " + alarmList.size() + " : " + myAlarmManager.pendingId + " : " + prayerWakto);
+        for (int i = 0; i < alarmList.size(); i++) {
+            Utils.log("DB: " + alarmList.get(i).getPendingID() + " : " + alarmList.get(i).getPrayerWakto());
+        }
     }
 
 

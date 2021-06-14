@@ -29,6 +29,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.shadhinlab.reminder.R;
+import com.shadhinlab.reminder.models.MAlarm;
 import com.shadhinlab.reminder.models.MTime;
 import com.shadhinlab.reminder.tools.MyAlarmManager;
 import com.shadhinlab.reminder.tools.PermissionUtils;
@@ -36,6 +37,8 @@ import com.shadhinlab.reminder.tools.Utils;
 import com.shadhinlab.reminder.db.MyDatabase;
 import com.shadhinlab.reminder.models.MPrayerTime;
 import com.shadhinlab.reminder.network.ApiClient;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -68,6 +71,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         long unixTime = System.currentTimeMillis() / 1000L;
         Utils.log("unixTime: " + Utils.getMonth());
         Utils.log("unixTime: " + Utils.getYear());
+        List<MAlarm> alarmList = myDatabase.myDao().getAllAlarmDetails();
+//        List<MAlarm> alarmList = myDatabase.myDao().getAlarmByWakto(3, 170582503);
+        Utils.log("Alarm size: " + alarmList.size());
+        for (int i = 0; i < alarmList.size(); i++) {
+            Utils.log("DB: " + alarmList.get(i).getPendingID() + " : " + alarmList.get(i).getPrayerWakto());
+        }
 
 //        myAlarmManager.setTestAlarm(0, 0, 10, 0, 123, "", false);
     }

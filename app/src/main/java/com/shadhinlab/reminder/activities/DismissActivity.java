@@ -92,7 +92,7 @@ public class DismissActivity extends AppCompatActivity implements RingtonePlayer
                     }
 
 //                    scheduleAlarm.cancelAlarm(myDatabase.myDao().getAlarmDetails(alarmID));
-                    scheduleAlarm.nextWaktoAlarm(prayerWakto);
+                    scheduleAlarm.nextWaktoAlarm(prayerWakto,pendingId);
                     ringtonePlayer.stop();
                     vibrator.stopVibrate();
                     fireAlarmPopup.dismiss();
@@ -118,11 +118,11 @@ public class DismissActivity extends AppCompatActivity implements RingtonePlayer
         if (!TextUtils.isEmpty(contentValue))
             Utils.savePref(Global.SNOOZE_CONTENT_TEXT, contentValue);
         pendingId = getIntent().getIntExtra("PendingId", 0);
-        prayerWakto = getIntent().getIntExtra("PrayerWakto", 0);
-        alarmID = getIntent().getIntExtra("AlarmID", 0);
+//        prayerWakto = getIntent().getIntExtra("Prayer", 0);
+        prayerWakto = getIntent().getIntExtra("AlarmID", 0);
         alarmNumber = Utils.getPref(Global.SNOOZE_REPEAT, 1);
 //        alarmNumber = getIntent().getIntExtra(pendingId + "", 0);
-        Utils.log("Content : " + contentValue + " pendingId : " + pendingId + " alarmNumber : " + alarmNumber + " AlarmID : " + alarmID);
+        Utils.log("Content : " + contentValue + " pendingId : " + pendingId + " prayerWakto : " + prayerWakto + " AlarmID : " + alarmID);
 
         vibrator = new VibratePlayer(this);
 
@@ -155,7 +155,7 @@ public class DismissActivity extends AppCompatActivity implements RingtonePlayer
 
     @Override
     public void onPlayerFinished() {
-        scheduleAlarm.nextWaktoAlarm(prayerWakto);
+        scheduleAlarm.nextWaktoAlarm(prayerWakto,pendingId);
         fireAlarmPopup.dismiss();
         finish();
     }

@@ -53,6 +53,7 @@ public class MyAlarmManager {
     }
 
     public void setSingleAlarm(int hour, int min, int pickTime, int prayerWakto, int intentId, String contentValue, boolean isBefore, boolean isEdit) {
+        Utils.log("setSingleAlarm wakto: " + prayerWakto);
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         if (isBefore)
@@ -349,11 +350,13 @@ public class MyAlarmManager {
 
 
     private PendingIntent pendingIntent(int id, int prayerWakto, String content) {
+        Utils.log("pendingIntent wakto: " + prayerWakto);
         Intent intent = new Intent(activity, MyBroadcastReceiver.class);
-        intent.putExtra("ContentValue", content);
+        intent.putExtra("ContentValue", "Hello");
+        intent.putExtra("AlarmID", prayerWakto);
 //        intent.putExtra(id + "", 0);
         intent.putExtra("PendingId", id);
-        intent.putExtra("PrayerWakto", prayerWakto);
+        intent.putExtra("Prayer", prayerWakto);
         return PendingIntent.getBroadcast(activity.getApplicationContext(), id, intent, PendingIntent.FLAG_UPDATE_CURRENT | Intent.FILL_IN_DATA);
     }
 
