@@ -12,14 +12,18 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 
@@ -31,6 +35,7 @@ import com.google.android.gms.location.LocationServices;
 import com.shadhinlab.reminder.R;
 import com.shadhinlab.reminder.models.MAlarm;
 import com.shadhinlab.reminder.models.MTime;
+import com.shadhinlab.reminder.tools.Global;
 import com.shadhinlab.reminder.tools.MyAlarmManager;
 import com.shadhinlab.reminder.tools.PermissionUtils;
 import com.shadhinlab.reminder.tools.Utils;
@@ -55,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ProgressDialog myProgressBar;
     private MyAlarmManager myAlarmManager;
     private LocationCallback mLocationCallback;
+    private Toolbar toolbar;
+    private int prayerMethod = 1;
 
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -82,6 +89,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void init() {
+        prayerMethod = Utils.getPref(Global.PRAYER_METHOD, 1);
+        toolbar = findViewById(R.id.toolbar);
         tvFazarTime = findViewById(R.id.tvFajrTime);
         tvIshaTime = findViewById(R.id.tvIshaTime);
         tvDuhurTime = findViewById(R.id.tvDhuhrTime);
@@ -98,6 +107,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mPrayerTime = new MPrayerTime();
         mTime = new MTime();
+        setSupportActionBar(toolbar);
+
     }
 
     private void clickListener() {
@@ -119,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getSunriseTimeOther(double lat, double lng) {
         Utils.log("getSunriseTimeOther");
-        Call<MPrayerTime> call = ApiClient.getInstance().getPrayerTimes(lat, lng, 1, Utils.getMonth(), Utils.getYear());
+        Call<MPrayerTime> call = ApiClient.getInstance().getPrayerTimes(lat, lng, prayerMethod, Utils.getMonth(), Utils.getYear());
         call.enqueue(new Callback<MPrayerTime>() {
             @Override
             public void onResponse(@NonNull Call<MPrayerTime> call, @NonNull Response<MPrayerTime> response) {
@@ -220,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 // Logic to handle location object
                                 getSunriseTimeOther(location.getLatitude(), location.getLongitude());
                                 Log.e("Location", "mFusedLocationClient Lat : " + location.getLatitude() + " Lng : " + location.getLongitude());
-                            }else {
+                            } else {
                                 Utils.log("getLocation null");
                                 requestNewLocationData();
                             }
@@ -288,6 +299,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
 
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        prayerMethod = Utils.getPref(Global.PRAYER_METHOD, 1);
+        Utils.log("PrayerMethod: " + prayerMethod);
+        getLocation();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.actionSettings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @SuppressLint("NonConstantResourceId")

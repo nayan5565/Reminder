@@ -6,8 +6,4 @@
         android:id="@+id/actionSettings"
         android:title="@string/preferences_title"
         app:showAsAction="never"/>
-    <item
-        android:id="@+id/actionTest"
-        android:title="@string/test"
-        app:showAsAction="never" />
 </menu>

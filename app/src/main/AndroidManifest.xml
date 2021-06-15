@@ -28,7 +28,8 @@
         android:theme="@style/Theme.Reminder"
         tools:node="replace"
         tools:targetApi="n">
-        <activity android:name=".activities.LocationActivity"></activity>
+        <activity android:name=".activities.SettingsActivity"/>
+        <activity android:name=".activities.LocationActivity" />
         <activity android:name=".activities.SetReminderActivity" />
         <activity android:name=".activities.DismissActivity" />
         <activity android:name=".activities.MainActivity">

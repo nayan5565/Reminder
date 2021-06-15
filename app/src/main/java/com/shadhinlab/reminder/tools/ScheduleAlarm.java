@@ -36,10 +36,15 @@ public class ScheduleAlarm {
         alarmList = myDatabase.myDao().getAlarmDetails();
         if (alarmList.size() > 0) {
             for (int i = 0; i < alarmList.size(); i++) {
-                if (alarmList.get(i).isBeforeAlarm())
-                    myAlarmManager.setNextDayAlarmPrayer(alarmList.get(i).getHour(), alarmList.get(i).getMin(), alarmList.get(i).getBeforePrayerTime(), alarmList.get(i).getPrayerWakto(), 123, "", true, true);
-                else
-                    myAlarmManager.setNextDayAlarmPrayer(alarmList.get(i).getHour(), alarmList.get(i).getMin(), alarmList.get(i).getAfterPrayerTime(), alarmList.get(i).getPrayerWakto(), 123, "", false, true);
+                int hour = Integer.parseInt(getTomorrowPrayerTIme(alarmList.get(i).getPrayerWakto()).split(":")[0]);
+                int min = Integer.parseInt(getTomorrowPrayerTIme(alarmList.get(i).getPrayerWakto()).split(":")[1]);
+                if (alarmList.get(i).isBeforeAlarm()) {
+                    myAlarmManager.setSingleAlarm(hour, min, alarmList.get(i).getBeforePrayerTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", true, true);
+                    myAlarmManager.setNextDayAlarmPrayer(hour, min, alarmList.get(i).getBeforePrayerTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", true, true);
+                } else {
+                    myAlarmManager.setSingleAlarm(hour, min, alarmList.get(i).getAfterPrayerTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", false, true);
+                    myAlarmManager.setNextDayAlarmPrayer(hour, min, alarmList.get(i).getAfterPrayerTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", false, true);
+                }
             }
         }
 
@@ -73,7 +78,7 @@ public class ScheduleAlarm {
     public void nextWaktoAlarm(int prayerWakto, int pendingId) {
         Utils.log("Next Day prayer: " + getTomorrowPrayerTIme(prayerWakto));
         List<MAlarm> alarmList = myDatabase.myDao().getAlarmByWakto(prayerWakto, pendingId);
-        Utils.log("Alarm size: " + alarmList.size()+" : "+pendingId);
+        Utils.log("Alarm size: " + alarmList.size() + " : " + pendingId);
         if (!getTomorrowPrayerTIme(prayerWakto).isEmpty()) {
             int hour = Integer.parseInt(getTomorrowPrayerTIme(prayerWakto).split(":")[0]);
             int min = Integer.parseInt(getTomorrowPrayerTIme(prayerWakto).split(":")[1]);

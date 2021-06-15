@@ -21,6 +21,7 @@ public class Global {
     public static final String TEST_ALARM = "testAlarm";
     public static final String CONTENT_ID = "contentId";
     public static final String CONTENT_TEXT = "contentText";
+    public static final String PRAYER_METHOD = "PrayerMethod";
     public static final String SNOOZE_CONTENT_TEXT = "snoozeContentText";
     public static final String DEFAULT_DIA_TEXT = "Only loser press the snooze button";
     public static final String TIME_UPDATED = "Time has been updated successfully";
