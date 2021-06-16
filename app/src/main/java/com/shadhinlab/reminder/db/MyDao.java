@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import com.shadhinlab.reminder.models.MAlarm;
+import com.shadhinlab.reminder.models.MPrayer;
 import com.shadhinlab.reminder.models.MPrayerTime;
 import com.shadhinlab.reminder.models.MRepeatAlarm;
 
@@ -15,7 +16,17 @@ import java.util.List;
 
 @Dao
 public interface MyDao {
-    @Query("delete from prayer_times ")
+    @Query("delete from prayer")
+    int clearPrayer();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void savePrayer(MPrayer prayerTimes);
+
+
+    @Query("select * from prayer")
+    MPrayer getPrayer();
+
+    @Query("delete from prayer_times")
     int clearPrayerTimes();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -23,7 +34,10 @@ public interface MyDao {
 
 
     @Query("select * from prayer_times")
-    MPrayerTime getPrayerTimes();
+    List<MPrayerTime> getPrayerTimes();
+
+    @Query("select * from prayer_times where date=:date")
+    MPrayerTime getPrayerTimesByDate(String date);
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

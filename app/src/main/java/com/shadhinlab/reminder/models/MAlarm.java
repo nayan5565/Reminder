@@ -9,11 +9,11 @@ import java.util.Date;
 public class MAlarm {
     @PrimaryKey(autoGenerate = true)
     private int id;
-    private int beforePrayerTime, afterPrayerTime, pendingID, hour, min, prayerWakto;
+    private int beforePrayerStartTime, afterPrayerStartTime, beforePrayerEndTime, afterPrayerEndTime, pendingID, hour, min, prayerWakto;
     private long longAlarmTime;
-    private String alarmName, dialogText,pickTime;
+    private String alarmName, dialogText, pickTime;
     private Date alarmDateTime;
-    private boolean isStopAlarm, isLongClick, isVibrate, isBeforeAlarm;
+    private boolean isStopAlarm, isLongClick, isVibrate, isBeforeAlarm, isStartTime;
 
     public String getPickTime() {
         return pickTime;
@@ -31,13 +31,20 @@ public class MAlarm {
         isBeforeAlarm = beforeAlarm;
     }
 
-
-    public int getAfterPrayerTime() {
-        return afterPrayerTime;
+    public boolean isStartTime() {
+        return isStartTime;
     }
 
-    public void setAfterPrayerTime(int afterPrayerTime) {
-        this.afterPrayerTime = afterPrayerTime;
+    public void setStartTime(boolean startTime) {
+        isStartTime = startTime;
+    }
+
+    public int getAfterPrayerStartTime() {
+        return afterPrayerStartTime;
+    }
+
+    public void setAfterPrayerStartTime(int afterPrayerStartTime) {
+        this.afterPrayerStartTime = afterPrayerStartTime;
     }
 
     public int getPrayerWakto() {
@@ -138,12 +145,27 @@ public class MAlarm {
         this.id = id;
     }
 
-    public int getBeforePrayerTime() {
-        return beforePrayerTime;
+    public int getBeforePrayerStartTime() {
+        return beforePrayerStartTime;
     }
 
-    public void setBeforePrayerTime(int beforePrayerTime) {
-        this.beforePrayerTime = beforePrayerTime;
+    public void setBeforePrayerStartTime(int beforePrayerStartTime) {
+        this.beforePrayerStartTime = beforePrayerStartTime;
     }
 
+    public int getBeforePrayerEndTime() {
+        return beforePrayerEndTime;
+    }
+
+    public void setBeforePrayerEndTime(int beforePrayerEndTime) {
+        this.beforePrayerEndTime = beforePrayerEndTime;
+    }
+
+    public int getAfterPrayerEndTime() {
+        return afterPrayerEndTime;
+    }
+
+    public void setAfterPrayerEndTime(int afterPrayerEndTime) {
+        this.afterPrayerEndTime = afterPrayerEndTime;
+    }
 }

@@ -16,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,7 +23,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -34,13 +32,14 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.shadhinlab.reminder.R;
 import com.shadhinlab.reminder.models.MAlarm;
+import com.shadhinlab.reminder.models.MPrayer;
+import com.shadhinlab.reminder.models.MPrayerTime;
 import com.shadhinlab.reminder.models.MTime;
 import com.shadhinlab.reminder.tools.Global;
 import com.shadhinlab.reminder.tools.MyAlarmManager;
 import com.shadhinlab.reminder.tools.PermissionUtils;
 import com.shadhinlab.reminder.tools.Utils;
 import com.shadhinlab.reminder.db.MyDatabase;
-import com.shadhinlab.reminder.models.MPrayerTime;
 import com.shadhinlab.reminder.network.ApiClient;
 
 import java.util.List;
@@ -54,8 +53,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView tvFazarTime, tvDuhurTime, tvAsarTime, tvMagribTime, tvIshaTime;
     private TextView tvSetFajrTime, tvSetDhuhrTime, tvSetAsrTime, tvSetMaghribTime, tvSetIshaTime;
     private MyDatabase myDatabase;
-    private MPrayerTime mPrayerTime;
+    private MPrayer mPrayer;
     private MTime mTime;
+    private MPrayerTime mPrayerTime;
     private FusedLocationProviderClient mFusedLocationClient;
     private ProgressDialog myProgressBar;
     private MyAlarmManager myAlarmManager;
@@ -84,6 +84,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for (int i = 0; i < alarmList.size(); i++) {
             Utils.log("DB: " + alarmList.get(i).getPendingID() + " : " + alarmList.get(i).getPrayerWakto());
         }
+        if (mPrayerTime!=null)
+            enableClickListener(true);
+        else enableClickListener(false);
 
 //        myAlarmManager.setTestAlarm(0, 0, 10, 0, 123, "", false);
     }
@@ -105,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         myDatabase = MyDatabase.getInstance(this);
         myAlarmManager = new MyAlarmManager(this);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        mPrayerTime = new MPrayerTime();
+        mPrayer = new MPrayer();
         mTime = new MTime();
         setSupportActionBar(toolbar);
 
@@ -119,44 +122,91 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvSetIshaTime.setOnClickListener(this);
     }
 
+    private void enableClickListener(boolean isEnable) {
+        tvSetFajrTime.setEnabled(isEnable);
+        tvSetDhuhrTime.setEnabled(isEnable);
+        tvSetAsrTime.setEnabled(isEnable);
+        tvSetMaghribTime.setEnabled(isEnable);
+        tvSetIshaTime.setEnabled(isEnable);
+    }
+
+
+    @SuppressLint("SetTextI18n")
     private void display() {
-        tvFazarTime.setText(mTime.getFajr().split(" ")[0]);
-        tvDuhurTime.setText(mTime.getDhuhr().split(" ")[0]);
-        tvAsarTime.setText(mTime.getAsr().split(" ")[0]);
-        tvMagribTime.setText(mTime.getMaghrib().split(" ")[0]);
-        tvIshaTime.setText(mTime.getIsha().split(" ")[0]);
+        mPrayerTime = myDatabase.myDao().getPrayerTimesByDate(Utils.getDate());
+//        tvFazarTime.setText(mTime.getFajr().split(" ")[0] + "-" + mTime.getSunrise().split(" ")[0]);
+//        tvDuhurTime.setText(mTime.getDhuhr().split(" ")[0] + "-" + mTime.getAsr().split(" ")[0]);
+//        tvAsarTime.setText(mTime.getAsr().split(" ")[0] + "-" + mTime.getMaghrib().split(" ")[0]);
+//        tvMagribTime.setText(mTime.getMaghrib().split(" ")[0] + "-" + mTime.getIsha().split(" ")[0]);
+//        tvIshaTime.setText(mTime.getIsha().split(" ")[0] + "-" + mTime.getFajr().split(" ")[0]);
+        if (mPrayerTime != null) {
+            tvFazarTime.setText(mPrayerTime.getStartFajr() + "-" + mPrayerTime.getEndtFajr());
+            tvDuhurTime.setText(mPrayerTime.getStartDhuhr() + "-" + mPrayerTime.getEndDhuhr());
+            tvAsarTime.setText(mPrayerTime.getStartAsr() + "-" + mPrayerTime.getEndAsr());
+            tvMagribTime.setText(mPrayerTime.getStartMaghrib() + "-" + mPrayerTime.getEndMaghrib());
+            tvIshaTime.setText(mPrayerTime.getStartIsha() + "-" + mPrayerTime.getEndIsha());
+        }
+
     }
 
 
     private void getSunriseTimeOther(double lat, double lng) {
         Utils.log("getSunriseTimeOther");
-        Call<MPrayerTime> call = ApiClient.getInstance().getPrayerTimes(lat, lng, prayerMethod, Utils.getMonth(), Utils.getYear());
-        call.enqueue(new Callback<MPrayerTime>() {
+        Call<MPrayer> call = ApiClient.getInstance().getPrayerTimes(lat, lng, prayerMethod, Utils.getMonth(), Utils.getYear());
+        call.enqueue(new Callback<MPrayer>() {
             @Override
-            public void onResponse(@NonNull Call<MPrayerTime> call, @NonNull Response<MPrayerTime> response) {
+            public void onResponse(@NonNull Call<MPrayer> call, @NonNull Response<MPrayer> response) {
                 myProgressBar.dismiss();
                 Utils.log("onResponse");
-                myDatabase.myDao().savePrayerTimes(response.body());
-                mPrayerTime = myDatabase.myDao().getPrayerTimes();
+                myDatabase.myDao().savePrayer(response.body());
+                mPrayer = myDatabase.myDao().getPrayer();
+                savePrayer(response.body());
                 getCurrentPrayerTime();
-                Log.e("Data", "Is: " + mPrayerTime.getData().get(0).getDate().getReadable());
+                if (mPrayerTime!=null)
+                    enableClickListener(true);
+                else enableClickListener(false);
+                Log.e("Data", "Is: " + mPrayer.getData().get(0).getDate().getReadable());
             }
 
             @Override
-            public void onFailure(@NonNull Call<MPrayerTime> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<MPrayer> call, @NonNull Throwable t) {
                 Utils.log("onFailure: " + t.getMessage());
                 myProgressBar.dismiss();
             }
         });
     }
 
+    private void savePrayer(MPrayer prayer) {
+        MPrayerTime mPrayerTime;
+        if (prayer != null && prayer.getData() != null && prayer.getData().size() > 0) {
+            for (int i = 0; i < prayer.getData().size(); i++) {
+                mPrayerTime = new MPrayerTime();
+                mPrayerTime.setDate(prayer.getData().get(i).getDate().getReadable());
+                mPrayerTime.setStartFajr(prayer.getData().get(i).getTimings().getFajr().split(" ")[0]);
+                mPrayerTime.setEndtFajr(prayer.getData().get(i).getTimings().getSunrise().split(" ")[0]);
+                mPrayerTime.setStartDhuhr(prayer.getData().get(i).getTimings().getDhuhr().split(" ")[0]);
+                mPrayerTime.setEndDhuhr(prayer.getData().get(i).getTimings().getAsr().split(" ")[0]);
+                mPrayerTime.setStartAsr(prayer.getData().get(i).getTimings().getAsr().split(" ")[0]);
+                mPrayerTime.setEndAsr(prayer.getData().get(i).getTimings().getMaghrib().split(" ")[0]);
+                mPrayerTime.setStartMaghrib(prayer.getData().get(i).getTimings().getMaghrib().split(" ")[0]);
+                mPrayerTime.setEndMaghrib(prayer.getData().get(i).getTimings().getIsha().split(" ")[0]);
+                mPrayerTime.setStartIsha(prayer.getData().get(i).getTimings().getIsha().split(" ")[0]);
+                mPrayerTime.setEndIsha(prayer.getData().get(i).getTimings().getFajr().split(" ")[0]);
+                mPrayerTime.setSunrise(prayer.getData().get(i).getTimings().getSunrise().split(" ")[0]);
+                mPrayerTime.setSunset(prayer.getData().get(i).getTimings().getSunset().split(" ")[0]);
+                myDatabase.myDao().savePrayerTimes(mPrayerTime);
+            }
+        }
+
+    }
+
     private boolean getCurrentPrayerTime() {
-        if (myDatabase.myDao().getPrayerTimes() != null && myDatabase.myDao().getPrayerTimes().getData() != null && myDatabase.myDao().getPrayerTimes().getData().size() > 0) {
-            for (int i = 0; i < myDatabase.myDao().getPrayerTimes().getData().size(); i++) {
-                if (myDatabase.myDao().getPrayerTimes().getData().get(i).getDate().getReadable().equals(Utils.getDate())) {
-                    Utils.log("Pos: " + myDatabase.myDao().getPrayerTimes().getData().get(i).getDate().getReadable());
-                    Utils.log("Pos 2 : " + myDatabase.myDao().getPrayerTimes().getData().get(i).getTimings().getIsha());
-                    mTime = myDatabase.myDao().getPrayerTimes().getData().get(i).getTimings();
+        if (myDatabase.myDao().getPrayer() != null && myDatabase.myDao().getPrayer().getData() != null && myDatabase.myDao().getPrayer().getData().size() > 0) {
+            for (int i = 0; i < myDatabase.myDao().getPrayer().getData().size(); i++) {
+                if (myDatabase.myDao().getPrayer().getData().get(i).getDate().getReadable().equals(Utils.getDate())) {
+                    Utils.log("Pos: " + myDatabase.myDao().getPrayer().getData().get(i).getDate().getReadable());
+                    Utils.log("Pos 2 : " + myDatabase.myDao().getPrayer().getData().get(i).getTimings().getIsha());
+                    mTime = myDatabase.myDao().getPrayer().getData().get(i).getTimings();
                     display();
                     return true;
                 }
@@ -329,24 +379,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void goToReminderActivity(int prayerWakto, String prayerStartTime, String prayerEndTime, String prayerWaktoName) {
+        startActivity(new Intent(this, SetReminderActivity.class)
+                .putExtra(Global.PRAYER_WAKTO, prayerWakto)
+                .putExtra(Global.PRAYER_START_TIME, prayerStartTime)
+                .putExtra(Global.PRAYER_END_TIME, prayerEndTime)
+                .putExtra(Global.PRAYER_WAKTO_NAME, prayerWaktoName));
+    }
+
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tvSetFajrTime:
-                startActivity(new Intent(this, SetReminderActivity.class).putExtra("PrayerWakto", 1).putExtra("PrayerTime", mTime.getFajr().split(" ")[0]));
+                goToReminderActivity(1, mPrayerTime.getStartFajr(),
+                        mPrayerTime.getEndtFajr(), "Fajr");
                 break;
             case R.id.tvSetDhuhrTime:
-                startActivity(new Intent(this, SetReminderActivity.class).putExtra("PrayerWakto", 2).putExtra("PrayerTime", mTime.getDhuhr().split(" ")[0]));
+                goToReminderActivity(2, mPrayerTime.getStartDhuhr(),
+                        mPrayerTime.getEndDhuhr(), "Dhuhr");
                 break;
             case R.id.tvSetAsrTime:
-                startActivity(new Intent(this, SetReminderActivity.class).putExtra("PrayerWakto", 3).putExtra("PrayerTime", mTime.getAsr().split(" ")[0]));
+                goToReminderActivity(3, mPrayerTime.getStartAsr(),
+                        mPrayerTime.getEndAsr(), "Asr");
                 break;
             case R.id.tvSetMaghribTime:
-                startActivity(new Intent(this, SetReminderActivity.class).putExtra("PrayerWakto", 4).putExtra("PrayerTime", mTime.getMaghrib().split(" ")[0]));
+                goToReminderActivity(4, mPrayerTime.getStartMaghrib(),
+                        mPrayerTime.getEndMaghrib(), "Maghrib");
                 break;
             case R.id.tvSetIshaTime:
-                startActivity(new Intent(this, SetReminderActivity.class).putExtra("PrayerWakto", 5).putExtra("PrayerTime", mTime.getIsha().split(" ")[0]));
+                goToReminderActivity(5, mPrayerTime.getStartIsha(),
+                        mPrayerTime.getEndIsha(), "Isha");
                 break;
         }
     }
