@@ -9,6 +9,7 @@ import androidx.room.Query;
 import com.shadhinlab.reminder.models.MAlarm;
 import com.shadhinlab.reminder.models.MPrayer;
 import com.shadhinlab.reminder.models.MPrayerTime;
+import com.shadhinlab.reminder.models.MReminderNumber;
 import com.shadhinlab.reminder.models.MRepeatAlarm;
 
 import java.util.Date;
@@ -38,6 +39,16 @@ public interface MyDao {
 
     @Query("select * from prayer_times where date=:date")
     MPrayerTime getPrayerTimesByDate(String date);
+
+    @Query("delete from reminder_number")
+    int clearReminderNumber();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void saveReminderNumber(MReminderNumber reminderNumber);
+
+
+    @Query("select * from reminder_number")
+    List<MReminderNumber> getReminderNumber();
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

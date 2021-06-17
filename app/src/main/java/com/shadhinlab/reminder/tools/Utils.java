@@ -61,6 +61,13 @@ public class Utils {
         return Integer.parseInt(dateFormat.format(date));
     }
 
+    public static int getMinute() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("mm", Locale.getDefault());
+        Date date = new Date();
+
+        return Integer.parseInt(dateFormat.format(date));
+    }
+
     public static String getYear() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy", Locale.getDefault());
         Date date = new Date();
@@ -583,6 +590,13 @@ public class Utils {
     public static void statusBarTransparent(Activity activity) {
         Window w = activity.getWindow();
         w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+    }
+
+    public static void call(String phone) {
+        Intent intent = new Intent(Intent.ACTION_CALL);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setData(Uri.parse("tel:+88" + phone));
+        MyApp.getInstance().startActivity(intent);
     }
 
 }

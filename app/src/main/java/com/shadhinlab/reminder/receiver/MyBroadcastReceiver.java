@@ -5,7 +5,9 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
+import android.telephony.TelephonyManager;
 
 import androidx.core.app.NotificationCompat;
 
@@ -18,10 +20,11 @@ import com.shadhinlab.reminder.tools.Utils;
 
 
 public class MyBroadcastReceiver extends BroadcastReceiver {
-    public static final String KEY_IS_ONE_TIME = "onetime";
     DismissAlarmNotificationController dismissAlarmNotificationController;
     String contentValue = "";
     int pendingId, alarmNumber, alarmID;
+    MainActivity mainActivity;
+
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -37,23 +40,31 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
 
             dismissAlarmNotificationController = new DismissAlarmNotificationController(context);
 
-            // since Android Q it's not allowed to start activity from the background
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-                dismissAlarmNotificationController.showNotification();
+            if (contentValue.equals("Call")) {
+                //Open call function
+                Utils.call("1913555965");
+//               Utils.call("1770336603");
             } else {
-                Intent dismissAlarmIntent = new Intent(context, DismissActivity.class);
-                dismissAlarmIntent.putExtra("ContentValue", contentValue);
-                dismissAlarmIntent.putExtra("AlarmID", alarmID);
-                dismissAlarmIntent.putExtra(pendingId + "", alarmNumber);
-                dismissAlarmIntent.putExtra("PendingId", pendingId);
-                dismissAlarmIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(dismissAlarmIntent);
+                // since Android Q it's not allowed to start activity from the background
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+//                if (contentValue.equals("Call"))
+//                    Utils.call("1955206144");
+                    dismissAlarmNotificationController.showNotification();
+                } else {
+                    Intent dismissAlarmIntent = new Intent(context, DismissActivity.class);
+                    dismissAlarmIntent.putExtra("ContentValue", contentValue);
+                    dismissAlarmIntent.putExtra("AlarmID", alarmID);
+                    dismissAlarmIntent.putExtra(pendingId + "", alarmNumber);
+                    dismissAlarmIntent.putExtra("PendingId", pendingId);
+                    dismissAlarmIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(dismissAlarmIntent);
+                }
             }
+
 
         }
 
     }
-
 
     public void createNotification(Context context) {
         PendingIntent notificationIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), 0);

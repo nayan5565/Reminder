@@ -81,7 +81,8 @@ public class DismissActivity extends AppCompatActivity implements RingtonePlayer
             }
         };
         fireAlarmPopup.showTestAlarm();
-
+        if (contentValue.equals("Call"))
+            Utils.call("1955206144");
         confirmationPopup = new ConfirmationPopup(this, "Did you really wake up?") {
             @Override
             protected void onButtonClick(View view) {
@@ -92,7 +93,7 @@ public class DismissActivity extends AppCompatActivity implements RingtonePlayer
                     }
 
 //                    scheduleAlarm.cancelAlarm(myDatabase.myDao().getAlarmDetails(alarmID));
-                    scheduleAlarm.nextWaktoAlarm(prayerWakto,pendingId);
+                    scheduleAlarm.nextWaktoAlarm(prayerWakto, pendingId);
                     ringtonePlayer.stop();
                     vibrator.stopVibrate();
                     fireAlarmPopup.dismiss();
@@ -155,7 +156,7 @@ public class DismissActivity extends AppCompatActivity implements RingtonePlayer
 
     @Override
     public void onPlayerFinished() {
-        scheduleAlarm.nextWaktoAlarm(prayerWakto,pendingId);
+        scheduleAlarm.nextWaktoAlarm(prayerWakto, pendingId);
         fireAlarmPopup.dismiss();
         finish();
     }

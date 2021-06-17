@@ -47,7 +47,7 @@ public class SetReminderActivity extends AppCompatActivity implements RingtonePl
         setContentView(R.layout.activity_set_reminder);
         init();
         seekbarSetup();
-        myAlarmManager.setSingleAlarm(16, 23, 3, prayerWakto, 123, "", false, false);
+//        myAlarmManager.setSingleAlarm(16, 23, 3, prayerWakto, 123, "", false, false);
     }
 
     private void init() {

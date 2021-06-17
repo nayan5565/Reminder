@@ -1,6 +1,5 @@
 package com.shadhinlab.reminder.tools;
 
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -225,7 +224,7 @@ public class MyAlarmManager {
         Utils.log("Set Alarm " + calendar.getTime() + " long : " + calendar.getTime().getTime() + " pendingId : " + pendingId);
 
         alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, alarmTimeLong, intervalMinutes, pendingIntent(pendingId, prayerWakto, contentValue));
-
+        Utils.showToast("Will Call " + calendar.getTime());
 
     }
 
@@ -352,7 +351,7 @@ public class MyAlarmManager {
     private PendingIntent pendingIntent(int id, int prayerWakto, String content) {
         Utils.log("pendingIntent wakto: " + prayerWakto);
         Intent intent = new Intent(activity, MyBroadcastReceiver.class);
-        intent.putExtra("ContentValue", "Hello");
+        intent.putExtra("ContentValue", content);
         intent.putExtra("AlarmID", prayerWakto);
 //        intent.putExtra(id + "", 0);
         intent.putExtra("PendingId", id);

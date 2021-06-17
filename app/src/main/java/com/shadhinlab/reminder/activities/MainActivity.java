@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -24,6 +26,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -35,13 +38,16 @@ import com.shadhinlab.reminder.models.MAlarm;
 import com.shadhinlab.reminder.models.MPrayer;
 import com.shadhinlab.reminder.models.MPrayerTime;
 import com.shadhinlab.reminder.models.MTime;
+import com.shadhinlab.reminder.service.PhoneCallStatesService;
 import com.shadhinlab.reminder.tools.Global;
 import com.shadhinlab.reminder.tools.MyAlarmManager;
+import com.shadhinlab.reminder.tools.MyApp;
 import com.shadhinlab.reminder.tools.PermissionUtils;
 import com.shadhinlab.reminder.tools.Utils;
 import com.shadhinlab.reminder.db.MyDatabase;
 import com.shadhinlab.reminder.network.ApiClient;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -49,7 +55,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private int PERMISSION_ID = 44, LOCATION_SETTINGS = 1;
+    private int PERMISSION_ID = 44, LOCATION_SETTINGS = 1, PERMISSIONS_REQUEST_PHONE_CALL = 2, PERMISSIONS_REQUEST_PHONE_STATE = 3;
     private TextView tvFazarTime, tvDuhurTime, tvAsarTime, tvMagribTime, tvIshaTime;
     private TextView tvSetFajrTime, tvSetDhuhrTime, tvSetAsrTime, tvSetMaghribTime, tvSetIshaTime;
     private MyDatabase myDatabase;
@@ -62,6 +68,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private LocationCallback mLocationCallback;
     private Toolbar toolbar;
     private int prayerMethod = 1;
+    private List<String> reqPerm;
+    private Button btnAutoCall;
 
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -70,13 +78,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
+//        phoneState();
+//        directCall();
         clickListener();
 //        PermissionUtils.displayLocationSettingsRequest(this, this, PERMISSION_ID);
         getCurrentPrayerTime();
         getLocation();
         locationCallBack();
         long unixTime = System.currentTimeMillis() / 1000L;
-        Utils.log("unixTime: " + Utils.getMonth());
+
         Utils.log("unixTime: " + Utils.getYear());
         List<MAlarm> alarmList = myDatabase.myDao().getAllAlarmDetails();
 //        List<MAlarm> alarmList = myDatabase.myDao().getAlarmByWakto(3, 170582503);
@@ -84,17 +94,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for (int i = 0; i < alarmList.size(); i++) {
             Utils.log("DB: " + alarmList.get(i).getPendingID() + " : " + alarmList.get(i).getPrayerWakto());
         }
-        if (mPrayerTime!=null)
+        if (mPrayerTime != null)
             enableClickListener(true);
         else enableClickListener(false);
 
-//        myAlarmManager.setTestAlarm(0, 0, 10, 0, 123, "", false);
+
     }
 
     private void init() {
         prayerMethod = Utils.getPref(Global.PRAYER_METHOD, 1);
         toolbar = findViewById(R.id.toolbar);
         tvFazarTime = findViewById(R.id.tvFajrTime);
+        btnAutoCall = findViewById(R.id.btnAutoCall);
         tvIshaTime = findViewById(R.id.tvIshaTime);
         tvDuhurTime = findViewById(R.id.tvDhuhrTime);
         tvAsarTime = findViewById(R.id.tvAsrTime);
@@ -114,12 +125,79 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    private void phoneCallPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, PERMISSIONS_REQUEST_PHONE_CALL);
+        }
+
+//        else {
+//
+//            //Open call function
+//            String phone = "1955206144";
+//            Intent intent = new Intent(Intent.ACTION_CALL);
+//            intent.setData(Uri.parse("tel:+880" + phone));
+//            startActivity(intent);
+//
+//
+//        }
+
+
+    }
+
+    public void phoneStatePermission() {
+        // Check the SDK version and whether the permission is already granted or not.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.PROCESS_OUTGOING_CALLS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE, Manifest.permission.PROCESS_OUTGOING_CALLS}, PERMISSIONS_REQUEST_PHONE_STATE);
+        } else {
+            Utils.log("already phoneStatePermission");
+            Utils.showToast("already phoneStatePermission");
+//        IntentFilter filter = new IntentFilter();
+//        filter.addAction(Intent.ACTION_NEW_OUTGOING_CALL);
+//        registerReceiver(new PhoneStateReceiver(), filter);
+//            Intent i = new Intent(MainActivity.this, PhoneCallStatesService.class);
+//            startService(i);
+
+        }
+    }
+
+
+    private boolean checkPermission() {
+        int i = 0;
+        String[] perm = {Manifest.permission.READ_PHONE_STATE, Manifest.permission.PROCESS_OUTGOING_CALLS};
+        reqPerm = new ArrayList<>();
+
+        for (String permis : perm) {
+            int resultPhone = ContextCompat.checkSelfPermission(MainActivity.this, permis);
+            if (resultPhone == PackageManager.PERMISSION_GRANTED) {
+                i++;
+
+            } else {
+                reqPerm.add(permis);
+            }
+        }
+        if (i == 2) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean requestPermission(List<String> perm) {
+        String[] listReq = new String[perm.size()];
+        listReq = perm.toArray(listReq);
+        ActivityCompat.requestPermissions(MainActivity.this, listReq, PERMISSIONS_REQUEST_PHONE_STATE);
+
+
+        return false;
+    }
+
     private void clickListener() {
         tvSetFajrTime.setOnClickListener(this);
         tvSetDhuhrTime.setOnClickListener(this);
         tvSetAsrTime.setOnClickListener(this);
         tvSetMaghribTime.setOnClickListener(this);
         tvSetIshaTime.setOnClickListener(this);
+        btnAutoCall.setOnClickListener(this);
     }
 
     private void enableClickListener(boolean isEnable) {
@@ -162,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mPrayer = myDatabase.myDao().getPrayer();
                 savePrayer(response.body());
                 getCurrentPrayerTime();
-                if (mPrayerTime!=null)
+                if (mPrayerTime != null)
                     enableClickListener(true);
                 else enableClickListener(false);
                 Log.e("Data", "Is: " + mPrayer.getData().get(0).getDate().getReadable());
@@ -327,10 +405,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Utils.log("onRequestPermissionsResult");
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Utils.log("PermissionsResult granted");
-                if (Utils.isInternetOn()) getLocation();
+                if (Utils.isInternetOn()) {
+                    phoneCallPermission();
+
+                    getLocation();
+                }
 //                if (Utils.isInternetOn()) getLastLocation();
                 else Utils.showToast("No internet");
             }
+        } else if (requestCode == PERMISSIONS_REQUEST_PHONE_CALL) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Utils.log("Phone permission granted");
+                if (Utils.isInternetOn()) {
+                    phoneStatePermission();
+                }
+            }
+
+
+        } else if (requestCode == PERMISSIONS_REQUEST_PHONE_STATE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Utils.log("Phone state permission granted");
+                if (Utils.isInternetOn()) {
+                    phoneStatePermission();
+                }
+            }
+
+
         }
     }
 
@@ -410,6 +510,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.tvSetIshaTime:
                 goToReminderActivity(5, mPrayerTime.getStartIsha(),
                         mPrayerTime.getEndIsha(), "Isha");
+                break;
+            case R.id.btnAutoCall:
+//                Utils.log("Minute: " + Utils.getMinute());
+//                myAlarmManager.setTestAlarm(0, 0, Utils.getMinute() + 1, 0, 1, 123, "Call", false);
+//                //Open call function
+//                Utils.call("0191355565");
+                startActivity(new Intent(MainActivity.this, SetReminderCallActivity.class)
+                        .putExtra(Global.PRAYER_START_TIME, mPrayerTime.getStartFajr()));
                 break;
         }
     }
