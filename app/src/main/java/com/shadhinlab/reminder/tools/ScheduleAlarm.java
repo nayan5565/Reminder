@@ -39,21 +39,21 @@ public class ScheduleAlarm {
                     int hour = Integer.parseInt(getTomorrowPrayerStartTime(alarmList.get(i).getPrayerWakto()).split(":")[0]);
                     int min = Integer.parseInt(getTomorrowPrayerStartTime(alarmList.get(i).getPrayerWakto()).split(":")[1]);
                     if (alarmList.get(i).isBeforeAlarm()) {
-                        myAlarmManager.setSingleAlarm(hour, min, alarmList.get(i).getBeforePrayerStartTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", true, true);
-                        myAlarmManager.setNextDayAlarmPrayer(hour, min, alarmList.get(i).getBeforePrayerStartTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", true, true);
+                        myAlarmManager.setSingleAlarm(hour, min, alarmList.get(i).getBeforePrayerStartTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", "", true, true);
+                        myAlarmManager.setNextDayAlarmPrayer(hour, min, alarmList.get(i).getBeforePrayerStartTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", "", true, true);
                     } else {
-                        myAlarmManager.setSingleAlarm(hour, min, alarmList.get(i).getAfterPrayerStartTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", false, true);
-                        myAlarmManager.setNextDayAlarmPrayer(hour, min, alarmList.get(i).getAfterPrayerStartTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", false, true);
+                        myAlarmManager.setSingleAlarm(hour, min, alarmList.get(i).getAfterPrayerStartTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", "", false, true);
+                        myAlarmManager.setNextDayAlarmPrayer(hour, min, alarmList.get(i).getAfterPrayerStartTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", "", false, true);
                     }
                 } else {
                     int hour = Integer.parseInt(getTomorrowPrayerEndTime(alarmList.get(i).getPrayerWakto()).split(":")[0]);
                     int min = Integer.parseInt(getTomorrowPrayerEndTime(alarmList.get(i).getPrayerWakto()).split(":")[1]);
                     if (alarmList.get(i).isBeforeAlarm()) {
-                        myAlarmManager.setSingleAlarm(hour, min, alarmList.get(i).getBeforePrayerEndTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", true, true);
-                        myAlarmManager.setNextDayAlarmPrayer(hour, min, alarmList.get(i).getBeforePrayerEndTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", true, true);
+                        myAlarmManager.setSingleAlarm(hour, min, alarmList.get(i).getBeforePrayerEndTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", "", true, true);
+                        myAlarmManager.setNextDayAlarmPrayer(hour, min, alarmList.get(i).getBeforePrayerEndTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", "", true, true);
                     } else {
-                        myAlarmManager.setSingleAlarm(hour, min, alarmList.get(i).getAfterPrayerEndTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", false, true);
-                        myAlarmManager.setNextDayAlarmPrayer(hour, min, alarmList.get(i).getAfterPrayerEndTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", false, true);
+                        myAlarmManager.setSingleAlarm(hour, min, alarmList.get(i).getAfterPrayerEndTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", "", false, true);
+                        myAlarmManager.setNextDayAlarmPrayer(hour, min, alarmList.get(i).getAfterPrayerEndTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", "", false, true);
                     }
                 }
             }
@@ -141,17 +141,17 @@ public class ScheduleAlarm {
                         int hourStart = Integer.parseInt(getTomorrowPrayerStartTime(prayerWakto).split(":")[0]);
                         int minStart = Integer.parseInt(getTomorrowPrayerStartTime(prayerWakto).split(":")[1]);
                         if (alarmList.get(i).isBeforeAlarm())
-                            myAlarmManager.setNextDayAlarmPrayer(hourStart, minStart, alarmList.get(i).getBeforePrayerStartTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", true, true);
+                            myAlarmManager.setNextDayAlarmPrayer(hourStart, minStart, alarmList.get(i).getBeforePrayerStartTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", "", true, true);
                         else
-                            myAlarmManager.setNextDayAlarmPrayer(hourStart, minStart, alarmList.get(i).getAfterPrayerStartTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", false, true);
+                            myAlarmManager.setNextDayAlarmPrayer(hourStart, minStart, alarmList.get(i).getAfterPrayerStartTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", "", false, true);
                         saveDb(alarmList.get(i), hourStart, minStart);
                     } else {
                         int hourEnd = Integer.parseInt(getTomorrowPrayerEndTime(prayerWakto).split(":")[0]);
                         int minEnd = Integer.parseInt(getTomorrowPrayerEndTime(prayerWakto).split(":")[1]);
                         if (alarmList.get(i).isBeforeAlarm())
-                            myAlarmManager.setNextDayAlarmPrayer(hourEnd, minEnd, alarmList.get(i).getBeforePrayerEndTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", true, true);
+                            myAlarmManager.setNextDayAlarmPrayer(hourEnd, minEnd, alarmList.get(i).getBeforePrayerEndTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", "", true, true);
                         else
-                            myAlarmManager.setNextDayAlarmPrayer(hourEnd, minEnd, alarmList.get(i).getAfterPrayerEndTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", false, true);
+                            myAlarmManager.setNextDayAlarmPrayer(hourEnd, minEnd, alarmList.get(i).getAfterPrayerEndTime(), alarmList.get(i).getPrayerWakto(), alarmList.get(i).getPendingID(), "", "", false, true);
                         saveDb(alarmList.get(i), hourEnd, minEnd);
                     }
 

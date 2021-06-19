@@ -7,14 +7,36 @@
     android:orientation="vertical"
     tools:context=".activities.SetReminderCallActivity">
 
-    <EditText
-        android:id="@+id/edtNumber"
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dp10"
-        android:autofillHints="Enter Number"
-        android:hint="Enter number"
-        android:inputType="phone" />
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="4">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp50"
+            android:layout_marginStart="@dimen/dp6"
+            android:layout_marginEnd="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_edit_text"
+            android:gravity="center"
+            android:text="+880" />
+
+        <EditText
+            android:id="@+id/edtNumber"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp50"
+            android:layout_margin="@dimen/dp10"
+            android:layout_weight="3"
+            android:autofillHints="Enter Number"
+            android:background="@drawable/rounded_edit_text"
+            android:hint="Enter number"
+            android:inputType="phone"
+            android:padding="@dimen/dp6" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
 
     <SeekBar
         android:id="@+id/sbBeforeStart"
@@ -49,6 +71,11 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/dp10"
         android:text="Set number for reminder" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvReminderCall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>

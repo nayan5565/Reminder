@@ -5,6 +5,9 @@ public class Global {
     public static final String PRAYER_START_TIME = "PrayerStartTime";
     public static final String PRAYER_END_TIME = "PrayerEndTime";
     public static final String PRAYER_WAKTO = "PrayerWakto";
+    public static final String REMINDER_CALL = "Call";
+    public static final String REMINDER_NUMBER = "reminderNumber";
+    public static final String REMINDER_NEXT_CALL = "nextCall";
     public static final String PRAYER_WAKTO_NAME = "PrayerWaktoName";
     public static final String SUNRISE_TOMORROW = "sunriseTomorrow";
     public static final String SUNRISE_NEXT = "sunriseNext";

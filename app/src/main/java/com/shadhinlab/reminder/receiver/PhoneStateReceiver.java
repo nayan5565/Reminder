@@ -4,12 +4,19 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
+import com.shadhinlab.reminder.db.MyDatabase;
+import com.shadhinlab.reminder.models.MReminderNumber;
+import com.shadhinlab.reminder.tools.Global;
+import com.shadhinlab.reminder.tools.MyApp;
 import com.shadhinlab.reminder.tools.Utils;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class PhoneStateReceiver extends BroadcastReceiver {
@@ -20,19 +27,24 @@ public class PhoneStateReceiver extends BroadcastReceiver {
     private static boolean isIncoming;
     private static String outgoingNumber;  //because the passed incoming is only valid in ringing
     private String incomingNumber;
+    private MyDatabase myDatabase;
+    private List<MReminderNumber> reminderNumbers;
 
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
+        Utils.log("Reminder: " + intent.getAction() + " : " + intent.getStringExtra(Global.REMINDER_CALL));
         if (intent.getAction() == null)
             return;
+        reminderNumbers = new ArrayList<>();
+        myDatabase = MyDatabase.getInstance(MyApp.getInstance().getContext());
+        reminderNumbers = myDatabase.myDao().getReminderNumber();
+
         if (intent.getAction().equals("android.intent.action.NEW_OUTGOING_CALL")) {
             if (intent.getExtras() != null) {
                 outgoingNumber = intent.getExtras().getString("android.intent.extra.PHONE_NUMBER");
 //                    String displayName = new CommonMethods().getContactName(outgoingNumber, context);
 //                outgoingNumber = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
-                Utils.showToast("Outgoing number : ");
             }
         } else {
             if (intent.getExtras() == null)
@@ -49,7 +61,7 @@ public class PhoneStateReceiver extends BroadcastReceiver {
             } else if (stateStr.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
                 incomingNumber = intent.getExtras().getString(TelephonyManager.EXTRA_INCOMING_NUMBER);
                 state = TelephonyManager.CALL_STATE_RINGING;
-                Utils.showToast("Incoming number : ");
+                Utils.showToast(incomingNumber);
             }
 
 
@@ -76,6 +88,17 @@ public class PhoneStateReceiver extends BroadcastReceiver {
         }
     }
 
+    private boolean isExistsNumber(String number) {
+        if (reminderNumbers.size() > 0) {
+            for (int i = 0; i < reminderNumbers.size(); i++) {
+                if (reminderNumbers.get(i).getNumber().equals(number))
+                    return true;
+            }
+
+        }
+        return false;
+    }
+
     public void onCallStateChanged(Context context, int state, String number, String outgoingNumber) {
 //        Log.e("State", "onCallStateChanged : " + state);
         if (lastState == state) {
@@ -90,15 +113,16 @@ public class PhoneStateReceiver extends BroadcastReceiver {
                 if (lastState != TelephonyManager.CALL_STATE_RINGING) {
                     isIncoming = false;
 //                    Utils.savePref(Global.CALLING_NUMBER, outgoingNumber, context);
-                    Utils.showToast("onOutgoingCallStarted : ");
+//                    Utils.showToast("onOutgoingCallStarted : ");
 
 
                 } else {
                     isIncoming = true;
 
 //                    Toast.makeText(context, "onIncomingCallAnswered : " + number, Toast.LENGTH_LONG).show();
-                    Utils.showToast("onIncomingCallAnswered : ");
-                    endCall(context);
+                    Utils.showToast("onIncomingCallAnswered : " + incomingNumber);
+//                    if (isExistsNumber(incomingNumber))
+//                        endCall(context);
 //                            Intent reivToServ = new Intent(context, RecorderService.class);
 //                            reivToServ.putExtra("number", number);
 //                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -118,10 +142,25 @@ public class PhoneStateReceiver extends BroadcastReceiver {
                     //Ring but no pickup-  a miss
 //                    onMissedCall(context, outgoingNumber, callStartTime);
                 } else if (isIncoming) {
-                    Utils.showToast("onIncomingCallEnded : " );
+                    Utils.showToast("onIncomingCallEnded : " + incomingNumber);
 
                 } else {
-                    Utils.showToast("onOutgoingCallEnded : " );
+//                    Utils.showToast("onOutgoingCallEnded : ");
+                    Utils.log("Size: " + reminderNumbers.size());
+
+                    if (reminderNumbers.size() > 1) {
+                        int nextCall = Utils.getPref(Global.REMINDER_NEXT_CALL, 0);
+                        nextCall++;
+                        Utils.savePref(Global.REMINDER_NEXT_CALL, nextCall);
+                        Utils.log("Pos: " + nextCall);
+                        if (reminderNumbers.size() != nextCall) {
+                            if (Utils.calculateMinutes(reminderNumbers.get(nextCall).getReminderTime(), Utils.getTodaysTime24Fomat()) < 5 && Utils.calculateMinutes(reminderNumbers.get(nextCall).getReminderTime(), Utils.getTodaysTime24Fomat()) >= 0)
+                                Utils.call(reminderNumbers.get(nextCall).getNumber());
+                        } else Utils.savePref(Global.REMINDER_NEXT_CALL, 0);
+
+
+                    }
+
                 }
                 break;
         }

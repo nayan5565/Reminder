@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
@@ -38,10 +37,8 @@ import com.shadhinlab.reminder.models.MAlarm;
 import com.shadhinlab.reminder.models.MPrayer;
 import com.shadhinlab.reminder.models.MPrayerTime;
 import com.shadhinlab.reminder.models.MTime;
-import com.shadhinlab.reminder.service.PhoneCallStatesService;
 import com.shadhinlab.reminder.tools.Global;
 import com.shadhinlab.reminder.tools.MyAlarmManager;
-import com.shadhinlab.reminder.tools.MyApp;
 import com.shadhinlab.reminder.tools.PermissionUtils;
 import com.shadhinlab.reminder.tools.Utils;
 import com.shadhinlab.reminder.db.MyDatabase;
@@ -55,7 +52,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private int PERMISSION_ID = 44, LOCATION_SETTINGS = 1, PERMISSIONS_REQUEST_PHONE_CALL = 2, PERMISSIONS_REQUEST_PHONE_STATE = 3;
+    private int PERMISSIONS_REQUEST_LOCATION = 44, LOCATION_SETTINGS = 1, PERMISSIONS_REQUEST_PHONE_CALL = 2, PERMISSIONS_REQUEST_PHONE_STATE = 3;
     private TextView tvFazarTime, tvDuhurTime, tvAsarTime, tvMagribTime, tvIshaTime;
     private TextView tvSetFajrTime, tvSetDhuhrTime, tvSetAsrTime, tvSetMaghribTime, tvSetIshaTime;
     private MyDatabase myDatabase;
@@ -77,15 +74,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Utils.log("ct: " + Utils.getTodaysTime24Fomat());
+        Utils.log("Diff: " + Utils.calculateMinutes("03:44", Utils.getTodaysTime24Fomat()));
         init();
-//        phoneState();
-//        directCall();
         clickListener();
-//        PermissionUtils.displayLocationSettingsRequest(this, this, PERMISSION_ID);
         getCurrentPrayerTime();
-        getLocation();
+        locationPermission();
         locationCallBack();
         long unixTime = System.currentTimeMillis() / 1000L;
+//        myAlarmManager.setAlarmDateWise(Utils.getMonthFromCalender(), 16, 10, 10, 0, 0, 123, "", "", false);
 
         Utils.log("unixTime: " + Utils.getYear());
         List<MAlarm> alarmList = myDatabase.myDao().getAllAlarmDetails();
@@ -125,22 +122,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void locationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSIONS_REQUEST_LOCATION);
+        } else {
+            getLocation();
+        }
+
+    }
+
     private void phoneCallPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, PERMISSIONS_REQUEST_PHONE_CALL);
         }
-
-//        else {
-//
-//            //Open call function
-//            String phone = "1955206144";
-//            Intent intent = new Intent(Intent.ACTION_CALL);
-//            intent.setData(Uri.parse("tel:+880" + phone));
-//            startActivity(intent);
-//
-//
-//        }
-
 
     }
 
@@ -295,6 +290,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return false;
     }
 
+    @SuppressLint("MissingPermission")
     private void requestNewLocationData() {
 
         LocationRequest mLocationRequest = new LocationRequest();
@@ -304,17 +300,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mLocationRequest.setNumUpdates(1);
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            Utils.log("requestNewLocationData");
-            return;
-        }
         mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
 
     }
@@ -330,51 +315,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         };
     }
 
+    @SuppressLint("MissingPermission")
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void getLocation() {
         myProgressBar.setMessage("Detect your location....");
         myProgressBar.setCanceledOnTouchOutside(false);
         myProgressBar.show();
-        if (PermissionUtils.checkPermissions(this)) {
-            Utils.log("checkPermissions");
-            if (isLocationEnabled()) {
-                Utils.log("isLocationEnabled");
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    Utils.log("getLocation 2");
-                    myProgressBar.dismiss();
-                    return;
-                }
-                mFusedLocationClient.getLastLocation()
-                        .addOnSuccessListener(this, location -> {
-                            Utils.log("getLocation 3");
-                            // Got last known location. In some rare situations this can be null.
-                            if (location != null) {
-                                // Logic to handle location object
-                                getSunriseTimeOther(location.getLatitude(), location.getLongitude());
-                                Log.e("Location", "mFusedLocationClient Lat : " + location.getLatitude() + " Lng : " + location.getLongitude());
-                            } else {
-                                Utils.log("getLocation null");
-                                requestNewLocationData();
-                            }
-                        });
-            } else {
-                Utils.log("isLocationEnabled else");
-                myProgressBar.dismiss();
-                PermissionUtils.displayLocationSettingsRequest(MainActivity.this, this, LOCATION_SETTINGS);
-            }
-
+        if (isLocationEnabled()) {
+            Utils.log("isLocationEnabled");
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, location -> {
+                        Utils.log("getLocation 3");
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            // Logic to handle location object
+                            getSunriseTimeOther(location.getLatitude(), location.getLongitude());
+                            Log.e("Location", "mFusedLocationClient Lat : " + location.getLatitude() + " Lng : " + location.getLongitude());
+                        } else {
+                            Utils.log("getLocation null");
+//                                requestNewLocationData();
+                            getLocation();
+                        }
+                    });
         } else {
-            Utils.log("requestPermissions");
+            Utils.log("isLocationEnabled else");
             myProgressBar.dismiss();
-            PermissionUtils.requestPermissions(this, PERMISSION_ID);
+            PermissionUtils.displayLocationSettingsRequest(MainActivity.this, this, LOCATION_SETTINGS);
         }
+
 
     }
 
@@ -401,7 +369,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSION_ID) {
+        if (requestCode == PERMISSIONS_REQUEST_LOCATION) {
             Utils.log("onRequestPermissionsResult");
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Utils.log("PermissionsResult granted");
@@ -441,6 +409,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (resultCode == RESULT_OK) {
                 Utils.log("PERMISSION_GRANTED");
                 if (Utils.isInternetOn()) if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    Utils.showToast("Permission granted activity");
                     getLocation();
                 } else Utils.showToast("No internet");
             } else {

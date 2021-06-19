@@ -14,24 +14,35 @@ import androidx.core.app.NotificationCompat;
 import com.shadhinlab.reminder.activities.MainActivity;
 import com.shadhinlab.reminder.R;
 import com.shadhinlab.reminder.activities.DismissActivity;
+import com.shadhinlab.reminder.db.MyDatabase;
+import com.shadhinlab.reminder.models.MReminderNumber;
 import com.shadhinlab.reminder.tools.DismissAlarmNotificationController;
 import com.shadhinlab.reminder.tools.Global;
+import com.shadhinlab.reminder.tools.MyApp;
 import com.shadhinlab.reminder.tools.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MyBroadcastReceiver extends BroadcastReceiver {
     DismissAlarmNotificationController dismissAlarmNotificationController;
-    String contentValue = "";
+    String contentValue = "", reminderNumber;
     int pendingId, alarmNumber, alarmID;
-    MainActivity mainActivity;
+    MyDatabase myDatabase;
+    List<MReminderNumber> reminderNumbers;
 
 
     @Override
     public void onReceive(Context context, Intent intent) {
 //        Utils.showToast(Utils.getPrefBoolean(Global.ALARM_ENABLE, false) + "");
         Utils.log("AlarmEnable : " + Utils.getPrefBoolean(Global.ALARM_ENABLE, true));
+        reminderNumbers = new ArrayList<>();
+        myDatabase = MyDatabase.getInstance(MyApp.getInstance().getContext());
+        reminderNumbers = myDatabase.myDao().getReminderNumber();
         if (Utils.getPrefBoolean(Global.ALARM_ENABLE, true)) {
             contentValue = intent.getStringExtra("ContentValue");
+            reminderNumber = intent.getStringExtra(Global.REMINDER_NUMBER);
             pendingId = intent.getIntExtra("PendingId", 0);
             alarmID = intent.getIntExtra("AlarmID", 0);
             alarmNumber = intent.getIntExtra(pendingId + "", 0);
@@ -41,9 +52,10 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
             dismissAlarmNotificationController = new DismissAlarmNotificationController(context);
 
             if (contentValue.equals("Call")) {
+
                 //Open call function
-                Utils.call("1913555965");
-//               Utils.call("1770336603");
+                if (reminderNumbers.size() > 0)
+                    Utils.call(reminderNumber);
             } else {
                 // since Android Q it's not allowed to start activity from the background
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {

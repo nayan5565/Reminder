@@ -262,7 +262,7 @@ public class SetReminderActivity extends AppCompatActivity implements RingtonePl
     private void createBeforeAlarm(int hour, int minute) {
         String pickTimes = Utils.getTimeConverter(Utils.timeCalculate(hour, minute, pickBeforeStartTime));
         Utils.log("pickTimes: " + pickTimes);
-        myAlarmManager.setSingleAlarm(hour, minute, pickBeforeStartTime, prayerWakto, 123, "", true, false);
+        myAlarmManager.setSingleAlarm(hour, minute, pickBeforeStartTime, prayerWakto, 123, "","", true, false);
 //        myAlarmManager.setSingleAlarm(Calendar.FRIDAY, hour, minute, pickBeforeTime, updateAlarm.getPendingID(), "", false);
         saveDb(hour, minute, pickTimes, true, true);
 
@@ -271,7 +271,7 @@ public class SetReminderActivity extends AppCompatActivity implements RingtonePl
     private void createAfterAlarm(int hour, int minute) {
         String pickTimes = Utils.getTimeConverter(Utils.timeCalculate(hour, minute, pickAfterStartTime));
         Utils.log("createAfterAlarm: " + prayerWakto);
-        myAlarmManager.setSingleAlarm(hour, minute, pickAfterStartTime, prayerWakto, 123, "", false, false);
+        myAlarmManager.setSingleAlarm(hour, minute, pickAfterStartTime, prayerWakto, 123, "","", false, false);
 //        myAlarmManager.setNextDayAlarmPrayer(hour, minute, pickAfterStartTime, prayerWakto, 123, "", false, false);
         saveDb(hour, minute, pickTimes, false, true);
     }
@@ -279,7 +279,7 @@ public class SetReminderActivity extends AppCompatActivity implements RingtonePl
     private void createBeforeEndAlarm(int hour, int minute) {
         String pickTimes = Utils.getTimeConverter(Utils.timeCalculate(hour, minute, pickBeforeEndTime));
         Utils.log("pickTimes: " + pickTimes);
-        myAlarmManager.setSingleAlarm(hour, minute, pickBeforeEndTime, prayerWakto, 123, "", true, false);
+        myAlarmManager.setSingleAlarm(hour, minute, pickBeforeEndTime, prayerWakto, 123, "","", true, false);
         saveDb(hour, minute, pickTimes, true, false);
 
     }
@@ -287,7 +287,7 @@ public class SetReminderActivity extends AppCompatActivity implements RingtonePl
     private void createAfterEndAlarm(int hour, int minute) {
         String pickTimes = Utils.getTimeConverter(Utils.timeCalculate(hour, minute, pickAfterEndTime));
         Utils.log("createAfterAlarm: " + prayerWakto);
-        myAlarmManager.setSingleAlarm(hour, minute, pickAfterEndTime, prayerWakto, 123, "", false, false);
+        myAlarmManager.setSingleAlarm(hour, minute, pickAfterEndTime, prayerWakto, 123, "","", false, false);
         saveDb(hour, minute, pickTimes, false, false);
     }
 

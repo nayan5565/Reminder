@@ -11,6 +11,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -59,6 +61,12 @@ public class Utils {
         Date date = new Date();
 
         return Integer.parseInt(dateFormat.format(date));
+    }
+
+    public static int getMonthFromCalender() {
+        Calendar calendar = Calendar.getInstance();
+
+        return calendar.get(Calendar.MONTH);
     }
 
     public static int getMinute() {
@@ -200,24 +208,24 @@ public class Utils {
     }
 
     public static String getTodaysTime() {
-        @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm");
-        String date_time = sdf.format(new Date());
-        return date_time;
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm", Locale.getDefault());
+        return sdf.format(new Date());
+    }
+
+    public static String getTodaysTime24Fomat() {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        return sdf.format(new Date());
     }
 
     public static String getTodaysOnlyAmPm() {
         @SuppressLint("SimpleDateFormat")
         SimpleDateFormat sdf = new SimpleDateFormat("a");
-        String date_time = sdf.format(new Date());
-        return date_time;
+        return sdf.format(new Date());
     }
 
     public static String getTodaysDateTimeNew() {
-        @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
-        String date_time = sdf.format(new Date());
-        return date_time;
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy", Locale.getDefault());
+        return sdf.format(new Date());
     }
 
     public static Date getDate(String date) {
@@ -595,8 +603,55 @@ public class Utils {
     public static void call(String phone) {
         Intent intent = new Intent(Intent.ACTION_CALL);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        intent.setAction(Global.REMINDER_CALL);
+//        intent.putExtra(Global.REMINDER_CALL, Global.REMINDER_CALL);
+//        intent.setPackage("com.android.server.telecom");
         intent.setData(Uri.parse("tel:+88" + phone));
         MyApp.getInstance().startActivity(intent);
     }
 
+    private static void getIncomingNumber() {
+        TelephonyManager telephony = (TelephonyManager) MyApp.getInstance().getContext().getSystemService(Context.TELEPHONY_SERVICE);
+        telephony.listen(new PhoneStateListener() {
+            @Override
+            public void onCallStateChanged(int state, String incomingNumb) {
+                super.onCallStateChanged(state, incomingNumb);
+                Utils.showToast("incomingNumber state : " + incomingNumb);
+            }
+        }, PhoneStateListener.LISTEN_CALL_STATE);
+    }
+
+    public static long calculateMinutes(String startDate, String endDate) {
+        int hours = 0;
+        long min = 0;
+        int days;
+        int dayMinutes = 0;
+        long difference;
+        try {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            Date date1 = simpleDateFormat.parse(startDate);
+            Date date2 = simpleDateFormat.parse(endDate);
+
+            difference = date2.getTime() - date1.getTime();
+            days = (int) (difference / (1000 * 60 * 60 * 24));
+            hours = (int) ((difference - (1000 * 60 * 60 * 24 * days)) / (1000 * 60 * 60 * 24));
+            min = (difference - (1000 * 60 * 60 * 24 * days) - (1000 * 60 * 60 * hours)) / (1000 * 60);
+            hours = (hours < 0 ? -hours : hours);
+            dayMinutes = days * 1440;
+//            Log.e("Product", " h " + hours);
+//            Log.e("Product", " m " + min);
+//            Log.e("Product", " d " + days);
+            return min + dayMinutes;
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return min + dayMinutes;
+    }
+
+    public static boolean isValidNumber(String mobileNumber) {
+        //"^(?:\\+88|88)?(01[3-9]\\d{8})$"
+        return mobileNumber.matches("^?(01[3-9]\\d{8})$");
+    }
 }
