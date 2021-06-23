@@ -8,7 +8,6 @@ public class ApiClient {
     private static ApiInterface apiRequests;
     private static String baseUrlPrayerTime = "http://api.aladhan.com/";
 
-
     public static ApiInterface getInstance() {
         if (apiRequests == null) {
 

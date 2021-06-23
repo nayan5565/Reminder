@@ -1,9 +1,12 @@
 package com.shadhinlab.reminder.network;
 
+import com.shadhinlab.reminder.models.MCallHijriCalender;
+import com.shadhinlab.reminder.models.MHijriCalender;
 import com.shadhinlab.reminder.models.MPrayer;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ApiInterface {
@@ -21,5 +24,8 @@ public interface ApiInterface {
             @Query("latitude") double latitude,
             @Query("longitude") double longitude,
             @Query("method") int method);
+
+    @GET("v1/gToHCalendar/{month}/{year}")
+    Call<MCallHijriCalender> getHijriMonth(@Path("month") int month, @Path("year") int year);
 }
 

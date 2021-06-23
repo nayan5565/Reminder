@@ -28,11 +28,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
+
 import com.shadhinlab.reminder.R;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -71,6 +76,13 @@ public class Utils {
 
     public static int getMinute() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("mm", Locale.getDefault());
+        Date date = new Date();
+
+        return Integer.parseInt(dateFormat.format(date));
+    }
+
+    public static int getDay() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd", Locale.getDefault());
         Date date = new Date();
 
         return Integer.parseInt(dateFormat.format(date));
@@ -619,6 +631,35 @@ public class Utils {
                 Utils.showToast("incomingNumber state : " + incomingNumb);
             }
         }, PhoneStateListener.LISTEN_CALL_STATE);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static long differenceTwoDate(){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate start = LocalDate.parse("2/3/2017",formatter);
+        LocalDate end = LocalDate.parse("3/3/2017",formatter);
+        return ChronoUnit.DAYS.between(start, end);
+    }
+
+    public static long getDaysBetweenDates(String start, String end) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        Date startDate, endDate;
+        long numberOfDays = 0;
+        try {
+            startDate = dateFormat.parse(start);
+            endDate = dateFormat.parse(end);
+            assert startDate != null;
+            assert endDate != null;
+            numberOfDays = getUnitBetweenDates(startDate, endDate, TimeUnit.DAYS);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return numberOfDays;
+    }
+
+    private static long getUnitBetweenDates(Date startDate, Date endDate, TimeUnit unit) {
+        long timeDiff = endDate.getTime() - startDate.getTime();
+        return unit.convert(timeDiff, TimeUnit.MILLISECONDS);
     }
 
     public static long calculateMinutes(String startDate, String endDate) {

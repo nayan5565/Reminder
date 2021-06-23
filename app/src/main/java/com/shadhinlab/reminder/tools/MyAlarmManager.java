@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.shadhinlab.reminder.receiver.MyBroadcastReceiver;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import static android.content.Context.ALARM_SERVICE;
@@ -18,6 +19,7 @@ import static android.content.Context.ALARM_SERVICE;
 public class MyAlarmManager {
     public long alarmTimeLong;
     public int pendingId, hours, minutes;
+    public Date getTime;
     private Context activity;
     private AlarmManager alarmManager;
     private long intervalWeek = 7 * 24 * 60 * 60 * 1000;
@@ -153,7 +155,7 @@ public class MyAlarmManager {
         alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTimeLong, pendingIntent(pendingId, prayerWakto, contentValue, reminderNumber));
     }
 
-    public void setAlarmDateWise(int month, int date,int hour, int min, int pickTime, int prayerWakto, int intentId, String contentValue, String reminderNumber, boolean isEdit) {
+    public void setAlarmDateWise(int month, int date, int hour, int min, int pickTime, int prayerWakto, int intentId, String contentValue, String reminderNumber, boolean isEdit) {
         Calendar calendar = Calendar.getInstance();
 //        Utils.log("Current Month: "+calendar.get(Calendar.MONTH));
         calendar.set(Calendar.MONTH, month);
@@ -161,7 +163,6 @@ public class MyAlarmManager {
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, min - pickTime);
         calendar.set(Calendar.SECOND, 0);
-
 
 
         if (calendar.before(new GregorianCalendar())) {
@@ -175,7 +176,7 @@ public class MyAlarmManager {
             pendingId = intentId;
         } else
             pendingId = (int) calendar.getTime().getTime();
-
+        getTime = calendar.getTime();
         Utils.log("Set date wise Alarm " + calendar.getTime() + " long : " + calendar.getTime().getTime() + " pendingId : " + pendingId);
 
 //        AlarmManager alarmManager = (AlarmManager) activity.getSystemService(ALARM_SERVICE);

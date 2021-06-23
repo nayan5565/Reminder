@@ -15,251 +15,449 @@
         app:title="Prayer Time"
         app:titleTextColor="@color/white" />
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cvFajr"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dp10"
-        app:cardBackgroundColor="@color/teal_700"
-        app:cardCornerRadius="@dimen/dp10">
+        android:layout_height="match_parent">
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:orientation="horizontal"
-            android:paddingStart="@dimen/dp10"
-            android:paddingTop="@dimen/dp10"
-            android:paddingEnd="@dimen/dp10"
-            android:paddingBottom="@dimen/dp10"
-            android:weightSum="3">
+            android:orientation="vertical"
+            tools:context=".activities.MainActivity">
 
-            <TextView
-                android:layout_width="0dp"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvFajr"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_weight="1"
-                android:text="Fajr"
-                android:textColor="@color/white"
-                android:textSize="@dimen/sp16" />
+                android:layout_margin="@dimen/dp10"
+                app:cardBackgroundColor="@color/teal_700"
+                app:cardCornerRadius="@dimen/dp10">
 
-            <TextView
-                android:id="@+id/tvFajrTime"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textColor="@color/white" />
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/dp10"
+                    android:paddingTop="@dimen/dp10"
+                    android:paddingEnd="@dimen/dp10"
+                    android:paddingBottom="@dimen/dp10"
+                    android:weightSum="3">
 
-            <TextView
-                android:id="@+id/tvSetFajrTime"
-                android:layout_width="0dp"
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_weight="1"
+                        android:text="Fajr"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp16" />
+
+                    <TextView
+                        android:id="@+id/tvFajrTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/tvSetFajrTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="Set"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp16" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvDhuhr"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:text="Set"
-                android:textColor="@color/white"
-                android:textSize="@dimen/sp16" />
+                android:layout_margin="@dimen/dp10"
+                app:cardBackgroundColor="@color/teal_700"
+                app:cardCornerRadius="@dimen/dp10">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/dp10"
+                    android:paddingTop="@dimen/dp10"
+                    android:paddingEnd="@dimen/dp10"
+                    android:paddingBottom="@dimen/dp10"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_weight="1"
+                        android:text="Dhuhr"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp16" />
+
+                    <TextView
+                        android:id="@+id/tvDhuhrTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/tvSetDhuhrTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="Set"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp16" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvAsr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp10"
+                app:cardBackgroundColor="@color/teal_700"
+                app:cardCornerRadius="@dimen/dp10">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/dp10"
+                    android:paddingTop="@dimen/dp10"
+                    android:paddingEnd="@dimen/dp10"
+                    android:paddingBottom="@dimen/dp10"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_weight="1"
+                        android:text="Asr"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp16" />
+
+                    <TextView
+                        android:id="@+id/tvAsrTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/tvSetAsrTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="Set"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp16" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvMaghrib"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp10"
+                app:cardBackgroundColor="@color/teal_700"
+                app:cardCornerRadius="@dimen/dp10">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/dp10"
+                    android:paddingTop="@dimen/dp10"
+                    android:paddingEnd="@dimen/dp10"
+                    android:paddingBottom="@dimen/dp10"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_weight="1"
+                        android:text="Maghrib"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp16" />
+
+                    <TextView
+                        android:id="@+id/tvMaghribTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/tvSetMaghribTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="Set"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp16" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvIsha"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp10"
+                app:cardBackgroundColor="@color/teal_700"
+                app:cardCornerRadius="@dimen/dp10">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/dp10"
+                    android:paddingTop="@dimen/dp10"
+                    android:paddingEnd="@dimen/dp10"
+                    android:paddingBottom="@dimen/dp10"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Isha"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp16" />
+
+                    <TextView
+                        android:id="@+id/tvIshaTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/tvSetIshaTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="Set"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp16" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.cardview.widget.CardView>
+
+            <Button
+                android:id="@+id/btnAutoCall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp10"
+                android:text="Auto Call" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp10"
+                app:cardBackgroundColor="@color/teal_700"
+                app:cardCornerRadius="@dimen/dp10">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/dp10"
+                    android:paddingTop="@dimen/dp10"
+                    android:paddingEnd="@dimen/dp10"
+                    android:paddingBottom="@dimen/dp10"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="Date"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Hijri Date"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp16" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp10"
+                app:cardBackgroundColor="@color/teal_700"
+                app:cardCornerRadius="@dimen/dp10">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/dp10"
+                    android:paddingTop="@dimen/dp10"
+                    android:paddingEnd="@dimen/dp10"
+                    android:paddingBottom="@dimen/dp10"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:id="@+id/tvEnDate"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/tvArDate"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Set"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp16" />
+
+                    <TextView
+                        android:id="@+id/tvSet"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="Set"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp16" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvDate2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp10"
+                app:cardBackgroundColor="@color/teal_700"
+                app:cardCornerRadius="@dimen/dp10">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/dp10"
+                    android:paddingTop="@dimen/dp10"
+                    android:paddingEnd="@dimen/dp10"
+                    android:paddingBottom="@dimen/dp10"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:id="@+id/tvEnDate2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/tvArDate2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Set"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp16" />
+
+                    <TextView
+                        android:id="@+id/tvSet2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="Set"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp16" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvDate3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp10"
+                app:cardBackgroundColor="@color/teal_700"
+                app:cardCornerRadius="@dimen/dp10">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/dp10"
+                    android:paddingTop="@dimen/dp10"
+                    android:paddingEnd="@dimen/dp10"
+                    android:paddingBottom="@dimen/dp10"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:id="@+id/tvEnDate3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/tvArDate3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Set"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp16" />
+
+                    <TextView
+                        android:id="@+id/tvSet3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="Set"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp16" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.cardview.widget.CardView>
+
+
         </androidx.appcompat.widget.LinearLayoutCompat>
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cvDhuhr"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dp10"
-        app:cardBackgroundColor="@color/teal_700"
-        app:cardCornerRadius="@dimen/dp10">
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:orientation="horizontal"
-            android:paddingStart="@dimen/dp10"
-            android:paddingTop="@dimen/dp10"
-            android:paddingEnd="@dimen/dp10"
-            android:paddingBottom="@dimen/dp10"
-            android:weightSum="3">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_weight="1"
-                android:text="Dhuhr"
-                android:textColor="@color/white"
-                android:textSize="@dimen/sp16" />
-
-            <TextView
-                android:id="@+id/tvDhuhrTime"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textColor="@color/white" />
-
-            <TextView
-                android:id="@+id/tvSetDhuhrTime"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:text="Set"
-                android:textColor="@color/white"
-                android:textSize="@dimen/sp16" />
-        </androidx.appcompat.widget.LinearLayoutCompat>
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cvAsr"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dp10"
-        app:cardBackgroundColor="@color/teal_700"
-        app:cardCornerRadius="@dimen/dp10">
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:orientation="horizontal"
-            android:paddingStart="@dimen/dp10"
-            android:paddingTop="@dimen/dp10"
-            android:paddingEnd="@dimen/dp10"
-            android:paddingBottom="@dimen/dp10"
-            android:weightSum="3">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_weight="1"
-                android:text="Asr"
-                android:textColor="@color/white"
-                android:textSize="@dimen/sp16" />
-
-            <TextView
-                android:id="@+id/tvAsrTime"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textColor="@color/white" />
-
-            <TextView
-                android:id="@+id/tvSetAsrTime"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:text="Set"
-                android:textColor="@color/white"
-                android:textSize="@dimen/sp16" />
-        </androidx.appcompat.widget.LinearLayoutCompat>
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cvMaghrib"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dp10"
-        app:cardBackgroundColor="@color/teal_700"
-        app:cardCornerRadius="@dimen/dp10">
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:orientation="horizontal"
-            android:paddingStart="@dimen/dp10"
-            android:paddingTop="@dimen/dp10"
-            android:paddingEnd="@dimen/dp10"
-            android:paddingBottom="@dimen/dp10"
-            android:weightSum="3">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_weight="1"
-                android:text="Maghrib"
-                android:textColor="@color/white"
-                android:textSize="@dimen/sp16" />
-
-            <TextView
-                android:id="@+id/tvMaghribTime"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textColor="@color/white" />
-
-            <TextView
-                android:id="@+id/tvSetMaghribTime"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:text="Set"
-                android:textColor="@color/white"
-                android:textSize="@dimen/sp16" />
-        </androidx.appcompat.widget.LinearLayoutCompat>
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cvIsha"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dp10"
-        app:cardBackgroundColor="@color/teal_700"
-        app:cardCornerRadius="@dimen/dp10">
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:orientation="horizontal"
-            android:paddingStart="@dimen/dp10"
-            android:paddingTop="@dimen/dp10"
-            android:paddingEnd="@dimen/dp10"
-            android:paddingBottom="@dimen/dp10"
-            android:weightSum="3">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Isha"
-                android:textColor="@color/white"
-                android:textSize="@dimen/sp16" />
-
-            <TextView
-                android:id="@+id/tvIshaTime"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textColor="@color/white" />
-
-            <TextView
-                android:id="@+id/tvSetIshaTime"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:text="Set"
-                android:textColor="@color/white"
-                android:textSize="@dimen/sp16" />
-        </androidx.appcompat.widget.LinearLayoutCompat>
-    </androidx.cardview.widget.CardView>
-
-    <Button
-        android:id="@+id/btnAutoCall"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dp10"
-        android:text="Auto Call" />
+    </androidx.core.widget.NestedScrollView>
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>

@@ -2,6 +2,8 @@ package com.shadhinlab.reminder.tools;
 
 public class Global {
     public static final String SUNRISE_TODAY = "SunriseTime";
+    public static final String SAVE_DAY = "saveDay";
+    public static final String SAVE_MONTH = "saveMonth";
     public static final String PRAYER_START_TIME = "PrayerStartTime";
     public static final String PRAYER_END_TIME = "PrayerEndTime";
     public static final String PRAYER_WAKTO = "PrayerWakto";

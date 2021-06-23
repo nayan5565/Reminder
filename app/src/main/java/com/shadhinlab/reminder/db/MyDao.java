@@ -7,6 +7,8 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import com.shadhinlab.reminder.models.MAlarm;
+import com.shadhinlab.reminder.models.MArabicEnglishMonth;
+import com.shadhinlab.reminder.models.MHijriReminder;
 import com.shadhinlab.reminder.models.MPrayer;
 import com.shadhinlab.reminder.models.MPrayerTime;
 import com.shadhinlab.reminder.models.MReminderNumber;
@@ -26,6 +28,28 @@ public interface MyDao {
 
     @Query("select * from prayer")
     MPrayer getPrayer();
+
+    @Query("delete from arabic_english_month")
+    int clearHijriCalender();
+
+    @Query("delete from hijri_reminder")
+    int clearHijriReminder();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void saveHijriReminder(MHijriReminder hijriReminder);
+
+
+    @Query("select * from hijri_reminder")
+    List<MHijriReminder> getHijriReminder();
+
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void saveHijriCalender(MArabicEnglishMonth arabicEnglishMonth);
+
+
+    @Query("select * from arabic_english_month")
+    List<MArabicEnglishMonth> getHijriCalender();
+
 
     @Query("delete from prayer_times")
     int clearPrayerTimes();

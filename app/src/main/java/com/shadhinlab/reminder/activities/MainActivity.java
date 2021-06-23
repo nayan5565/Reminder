@@ -34,6 +34,9 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.shadhinlab.reminder.R;
 import com.shadhinlab.reminder.models.MAlarm;
+import com.shadhinlab.reminder.models.MArabicEnglishMonth;
+import com.shadhinlab.reminder.models.MCallHijriCalender;
+import com.shadhinlab.reminder.models.MHijriCalender;
 import com.shadhinlab.reminder.models.MPrayer;
 import com.shadhinlab.reminder.models.MPrayerTime;
 import com.shadhinlab.reminder.models.MTime;
@@ -44,6 +47,7 @@ import com.shadhinlab.reminder.tools.Utils;
 import com.shadhinlab.reminder.db.MyDatabase;
 import com.shadhinlab.reminder.network.ApiClient;
 
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +57,8 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private int PERMISSIONS_REQUEST_LOCATION = 44, LOCATION_SETTINGS = 1, PERMISSIONS_REQUEST_PHONE_CALL = 2, PERMISSIONS_REQUEST_PHONE_STATE = 3;
-    private TextView tvFazarTime, tvDuhurTime, tvAsarTime, tvMagribTime, tvIshaTime;
+    private TextView tvFazarTime, tvDuhurTime, tvAsarTime, tvMagribTime, tvSet, tvSet2, tvSet3,
+            tvIshaTime, tvEnDate, tvEnDate2, tvEnDate3, tvArDate, tvArDate2, tvArDate3;
     private TextView tvSetFajrTime, tvSetDhuhrTime, tvSetAsrTime, tvSetMaghribTime, tvSetIshaTime;
     private MyDatabase myDatabase;
     private MPrayer mPrayer;
@@ -67,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int prayerMethod = 1;
     private List<String> reqPerm;
     private Button btnAutoCall;
+    List<MArabicEnglishMonth> arabicEnglishMonths;
 
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -81,6 +87,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getCurrentPrayerTime();
         locationPermission();
         locationCallBack();
+        Utils.log("Save Day: " + Utils.getPref(Global.SAVE_DAY, 0) + " : " + Utils.getDay());
+        if (Utils.getPref(Global.SAVE_MONTH, 0) < Utils.getMonth()
+                || Utils.getPref(Global.SAVE_DAY, 0) < Utils.getDay()) {
+
+            if (Utils.getPref(Global.SAVE_MONTH, 0) == Utils.getMonth()
+                    && Utils.getPref(Global.SAVE_DAY, 0) < Utils.getDay()) {
+                Utils.log("get Hijri month is equal but day is smaller than current day");
+                getHijriCalender(Utils.getMonth() + 1);
+            } else {
+                Utils.log("get Hijri month is smaller than current month");
+                getHijriCalender(Utils.getMonth());
+            }
+
+        } else Utils.log("Already get Hijri");
+
+        displayHijriCalender();
         long unixTime = System.currentTimeMillis() / 1000L;
 //        myAlarmManager.setAlarmDateWise(Utils.getMonthFromCalender(), 16, 10, 10, 0, 0, 123, "", "", false);
 
@@ -112,12 +134,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvSetAsrTime = findViewById(R.id.tvSetAsrTime);
         tvSetMaghribTime = findViewById(R.id.tvSetMaghribTime);
         tvSetIshaTime = findViewById(R.id.tvSetIshaTime);
+        tvEnDate = findViewById(R.id.tvEnDate);
+        tvEnDate2 = findViewById(R.id.tvEnDate2);
+        tvEnDate3 = findViewById(R.id.tvEnDate3);
+        tvArDate = findViewById(R.id.tvArDate);
+        tvArDate2 = findViewById(R.id.tvArDate2);
+        tvArDate3 = findViewById(R.id.tvArDate3);
+        tvSet = findViewById(R.id.tvSet);
+        tvSet2 = findViewById(R.id.tvSet2);
+        tvSet3 = findViewById(R.id.tvSet3);
         myProgressBar = new ProgressDialog(this);
         myDatabase = MyDatabase.getInstance(this);
         myAlarmManager = new MyAlarmManager(this);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mPrayer = new MPrayer();
         mTime = new MTime();
+        arabicEnglishMonths = new ArrayList<>();
         setSupportActionBar(toolbar);
 
     }
@@ -193,6 +225,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvSetMaghribTime.setOnClickListener(this);
         tvSetIshaTime.setOnClickListener(this);
         btnAutoCall.setOnClickListener(this);
+        tvSet.setOnClickListener(this);
+        tvSet2.setOnClickListener(this);
+        tvSet3.setOnClickListener(this);
     }
 
     private void enableClickListener(boolean isEnable) {
@@ -223,7 +258,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    private void getSunriseTimeOther(double lat, double lng) {
+    private void getNamzTimes(double lat, double lng) {
         Utils.log("getSunriseTimeOther");
         Call<MPrayer> call = ApiClient.getInstance().getPrayerTimes(lat, lng, prayerMethod, Utils.getMonth(), Utils.getYear());
         call.enqueue(new Callback<MPrayer>() {
@@ -247,6 +282,63 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 myProgressBar.dismiss();
             }
         });
+    }
+
+    private void getHijriCalender(int month) {
+        Utils.log("Month: " + month);
+        Call<MCallHijriCalender> call = ApiClient.getInstance().getHijriMonth(month, Integer.parseInt(Utils.getYear()));
+        call.enqueue(new Callback<MCallHijriCalender>() {
+            @Override
+            public void onResponse(@NonNull Call<MCallHijriCalender> call, @NonNull Response<MCallHijriCalender> response) {
+                if (response.body() != null && response.body().getData().size() > 0) {
+
+                    saveHijriCalender(response.body().getData());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MCallHijriCalender> call, @NonNull Throwable t) {
+                Utils.log("getHijriCalender onFailure: " + t.getMessage());
+            }
+        });
+    }
+
+    private void saveHijriCalender(List<MHijriCalender> hijriCalenders) {
+        myDatabase.myDao().clearHijriCalender();
+        for (int i = 0; i < hijriCalenders.size(); i++) {
+            if (hijriCalenders.get(i).getHijri().getDay().equals("13")
+                    || hijriCalenders.get(i).getHijri().getDay().equals("14")
+                    || hijriCalenders.get(i).getHijri().getDay().equals("15")) {
+                MArabicEnglishMonth arabicEnglishMonth = new MArabicEnglishMonth();
+                arabicEnglishMonth.setEnDate(hijriCalenders.get(i).getGregorian().getDate());
+                arabicEnglishMonth.setEnDay(Integer.parseInt(hijriCalenders.get(i).getGregorian().getDay()));
+                arabicEnglishMonth.setEnMonth(Integer.parseInt(hijriCalenders.get(i).getGregorian().getDate().split("-")[1]));
+                arabicEnglishMonth.setArDate(hijriCalenders.get(i).getHijri().getDate());
+                arabicEnglishMonth.setArDay(hijriCalenders.get(i).getHijri().getDay());
+                arabicEnglishMonth.setArYear(hijriCalenders.get(i).getHijri().getYear());
+                Utils.log("Pick Date: " + hijriCalenders.get(i).getGregorian().getDate());
+                myDatabase.myDao().saveHijriCalender(arabicEnglishMonth);
+            }
+
+        }
+        displayHijriCalender();
+    }
+
+
+    private void displayHijriCalender() {
+        arabicEnglishMonths = myDatabase.myDao().getHijriCalender();
+        if (arabicEnglishMonths.size() > 2) {
+            tvArDate.setText(arabicEnglishMonths.get(0).getArDate());
+            tvArDate2.setText(arabicEnglishMonths.get(1).getArDate());
+            tvArDate3.setText(arabicEnglishMonths.get(2).getArDate());
+            tvEnDate.setText(arabicEnglishMonths.get(0).getEnDate());
+            tvEnDate2.setText(arabicEnglishMonths.get(1).getEnDate());
+            tvEnDate3.setText(arabicEnglishMonths.get(2).getEnDate());
+            Utils.savePref(Global.SAVE_DAY, arabicEnglishMonths.get(2).getEnDay());
+            Utils.savePref(Global.SAVE_MONTH, arabicEnglishMonths.get(2).getEnMonth());
+            Utils.log("Hijri month: " + Utils.getPref(Global.SAVE_MONTH, 0));
+        }
+
     }
 
     private void savePrayer(MPrayer prayer) {
@@ -309,7 +401,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 Location mLastLocation = locationResult.getLastLocation();
-                getSunriseTimeOther(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                getNamzTimes(mLastLocation.getLatitude(), mLastLocation.getLongitude());
                 Utils.log("onLocationResult Lat : " + mLastLocation.getLatitude() + " Lng : " + mLastLocation.getLongitude());
             }
         };
@@ -329,7 +421,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
                             // Logic to handle location object
-                            getSunriseTimeOther(location.getLatitude(), location.getLongitude());
+                            getNamzTimes(location.getLatitude(), location.getLongitude());
                             Log.e("Location", "mFusedLocationClient Lat : " + location.getLatitude() + " Lng : " + location.getLongitude());
                         } else {
                             Utils.log("getLocation null");
@@ -487,6 +579,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                Utils.call("0191355565");
                 startActivity(new Intent(MainActivity.this, SetReminderCallActivity.class)
                         .putExtra(Global.PRAYER_START_TIME, mPrayerTime.getStartFajr()));
+                break;
+            case R.id.tvSet:
+                ReminderHijriActivity.arabicEnglishMonth = arabicEnglishMonths.get(0);
+                startActivity(new Intent(MainActivity.this, ReminderHijriActivity.class));
+                break;
+            case R.id.tvSet2:
+                ReminderHijriActivity.arabicEnglishMonth = arabicEnglishMonths.get(1);
+                startActivity(new Intent(MainActivity.this, ReminderHijriActivity.class));
+                break;
+            case R.id.tvSet3:
+                ReminderHijriActivity.arabicEnglishMonth = arabicEnglishMonths.get(2);
+                startActivity(new Intent(MainActivity.this, ReminderHijriActivity.class));
                 break;
         }
     }

@@ -34,7 +34,8 @@
         android:theme="@style/Theme.Reminder"
         tools:node="replace"
         tools:targetApi="n">
-        <activity android:name=".activities.SetReminderCallActivity"></activity>
+        <activity android:name=".activities.ReminderHijriActivity"></activity>
+        <activity android:name=".activities.SetReminderCallActivity" />
         <activity android:name=".activities.SettingsActivity" />
         <activity android:name=".activities.LocationActivity" />
         <activity android:name=".activities.SetReminderActivity" />
