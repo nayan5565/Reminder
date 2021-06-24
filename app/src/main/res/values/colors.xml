@@ -33,4 +33,28 @@
     <color name="line_color">#D0E3EF</color>
     <color name="alarm_popup_bg_color">#FCB13E</color>
     <color name="splash_bg_color">#FFEFD8</color>
+
+    <color name="today">#4b82ff</color>
+    <color name="greyed_out">#c7c7c7</color>
+
+    <color name="summer">#44eebd82</color>
+    <color name="fall">#44d8d27e</color>
+    <color name="winter">#44a1c1da</color>
+    <color name="spring">#448da64b</color>
+
+    <color name="symptom_color_selected">#003366</color>
+    <color name="reaction_color_selected">#003366</color>
+    <color name="static_text_color">#003366</color>
+    <color name="journal_entry_listitem_text_color">#003366</color>
+    <color name="note_text_disabled">#333333</color>
+    <color name="blue">#0000FF</color>
+    <color name="navy">#6699FF</color>
+    <color name="sky">#0099CC</color>
+    <color name="gray">#808080</color>
+    <color name="lightgray">#e7e7e7</color>
+    <color name="lightgray02">#bfbfbf</color>
+    <color name="dark">#000015</color>
+    <color name="lightgreen">#336666</color>
+    <color name="orrange">#e33d1b</color>
+    <color name="darkorrange">#cc2303</color>
 </resources>

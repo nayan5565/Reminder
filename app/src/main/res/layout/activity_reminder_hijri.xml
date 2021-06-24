@@ -13,6 +13,38 @@
         app:title="Set Hijri Reminder "
         app:titleTextColor="@color/white" />
 
+    <TextView
+        android:id="@+id/tvTitleBeforeDay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dp20"
+        android:text="Before days"
+        android:textColor="@color/text_color_active_bold"
+        android:textSize="@dimen/sp18"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <SeekBar
+        android:id="@+id/sbBeforeDays"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp5"
+        android:layout_marginTop="@dimen/dp10"
+        android:layout_marginEnd="@dimen/dp5"
+        android:max="3"
+        android:theme="@style/MySeekBar"
+        android:thumb="@drawable/thumb" />
+
+    <TextView
+        android:id="@+id/tvPickingBeforeDays"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="@dimen/dp10"
+        android:layout_marginEnd="@dimen/dp20"
+        android:textColor="@color/colorAccent"
+        android:textSize="@dimen/sp18" />
+
     <Button
         android:id="@+id/btnPickTime"
         android:layout_width="match_parent"

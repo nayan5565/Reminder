@@ -36,8 +36,17 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.Month;
+import java.time.ZoneId;
+import java.time.chrono.Chronology;
+import java.time.chrono.HijrahChronology;
+import java.time.chrono.HijrahDate;
+import java.time.chrono.HijrahEra;
+import java.time.chrono.IsoChronology;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -413,12 +422,14 @@ public class Utils {
         return false;
     }
 
+    @SuppressLint("DefaultLocale")
     public static String getMinutesLeft(long toMillis) {
         long millisLeft = getMillisLeft(toMillis);
         return String.format("%02d", TimeUnit.MILLISECONDS.toMinutes(millisLeft) -
                 TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisLeft)));
     }
 
+    @SuppressLint("DefaultLocale")
     public static String getHoursLeft(long toMillis) {
         return String.format("%d", TimeUnit.MILLISECONDS.toHours(getMillisLeft(toMillis)));
     }
@@ -634,10 +645,10 @@ public class Utils {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public static long differenceTwoDate(){
+    public static long differenceTwoDate() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate start = LocalDate.parse("2/3/2017",formatter);
-        LocalDate end = LocalDate.parse("3/3/2017",formatter);
+        LocalDate start = LocalDate.parse("2/3/2017", formatter);
+        LocalDate end = LocalDate.parse("3/3/2017", formatter);
         return ChronoUnit.DAYS.between(start, end);
     }
 
@@ -694,5 +705,59 @@ public class Utils {
     public static boolean isValidNumber(String mobileNumber) {
         //"^(?:\\+88|88)?(01[3-9]\\d{8})$"
         return mobileNumber.matches("^?(01[3-9]\\d{8})$");
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static void hijriDate() {
+        ZoneId myZoneId = ZoneId.of("Etc/UTC");
+
+        HijrahDate hijrahDate1 = HijrahChronology.INSTANCE.date(LocalDate.now(myZoneId));
+        System.out.println(hijrahDate1);
+
+        // ########Another example########
+
+        // HijrahDate on the last day of January 1994 at the time zone of Etc/UTC
+        HijrahDate hijrahDate2 = HijrahChronology
+                .INSTANCE                                   // Instance of HijrahChronology
+                .date(LocalDate.of(1994, Month.JANUARY, 1)  // LocalDate of 01-Jan-1994
+                        .with(TemporalAdjusters.lastDayOfMonth())   // On the last day of Jan-1994
+                        .atStartOfDay()                             // At the start of the day i.e. 00:00
+                        .atZone(myZoneId));                         // At the time zone of Etc/UTC
+        System.out.println(hijrahDate2);
+        //OUTPUT: Hijrah-umalqura AH 1436-02-03
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static void main(String[] args) {
+        // Converted dates were taken from:
+        // https://www.islamicfinder.org/islamic-date-converter/
+        final LocalDate date = LocalDate.of(2018, 03, 10);
+        assert LocalDate.of(2018, 03, 10).equals(date);
+        System.out.println(String.format("%s <- Original date.", date));
+
+        final LocalDate muslimDate = toMuslim(date);
+        assert LocalDate.of(1439, 06, 22).equals(muslimDate);
+        System.out.println(String.format("%s <- Converted to Muslim.", muslimDate));
+
+        final LocalDate gregorianDate = toGregorian(muslimDate);
+        assert LocalDate.of(2018, 03, 10).equals(gregorianDate);
+        System.out.println(String.format("%s <- Converted back to Gregorian.", gregorianDate));
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static LocalDate toMuslim(LocalDate gregorianDate) {
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        final String hijrahDateString = HijrahChronology.INSTANCE.date(gregorianDate).format(formatter);
+
+        return LocalDate.parse(hijrahDateString, formatter);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static LocalDate toGregorian(LocalDate muslimDate) {
+        final HijrahDate hijrahDate = HijrahChronology.INSTANCE.date(HijrahEra.AH,
+                muslimDate.get(ChronoField.YEAR_OF_ERA), muslimDate.get(ChronoField.MONTH_OF_YEAR),
+                muslimDate.get(ChronoField.DAY_OF_MONTH));
+
+        return IsoChronology.INSTANCE.date(hijrahDate);
     }
 }

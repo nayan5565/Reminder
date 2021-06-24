@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.icu.util.IslamicCalendar;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -47,9 +48,10 @@ import com.shadhinlab.reminder.tools.Utils;
 import com.shadhinlab.reminder.db.MyDatabase;
 import com.shadhinlab.reminder.network.ApiClient;
 
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -80,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Utils.hijriDate();
         Utils.log("ct: " + Utils.getTodaysTime24Fomat());
         Utils.log("Diff: " + Utils.calculateMinutes("03:44", Utils.getTodaysTime24Fomat()));
         init();
@@ -286,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getHijriCalender(int month) {
         Utils.log("Month: " + month);
-        Call<MCallHijriCalender> call = ApiClient.getInstance().getHijriMonth(month, Integer.parseInt(Utils.getYear()),0);
+        Call<MCallHijriCalender> call = ApiClient.getInstance().getHijriMonth(month, Integer.parseInt(Utils.getYear()), 0);
         call.enqueue(new Callback<MCallHijriCalender>() {
             @Override
             public void onResponse(@NonNull Call<MCallHijriCalender> call, @NonNull Response<MCallHijriCalender> response) {
@@ -577,7 +580,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                myAlarmManager.setTestAlarm(0, 0, Utils.getMinute() + 1, 0, 1, 123, "Call", false);
 //                //Open call function
 //                Utils.call("0191355565");
-                startActivity(new Intent(MainActivity.this, SetReminderCallActivity.class)
+                startActivity(new Intent(MainActivity.this, SetReminderPhoneCallActivity.class)
                         .putExtra(Global.PRAYER_START_TIME, mPrayerTime.getStartFajr()));
                 break;
             case R.id.tvSet:

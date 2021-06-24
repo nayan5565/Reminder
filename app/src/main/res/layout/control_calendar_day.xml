@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ln"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/dp16"
+    android:background="@drawable/rounded_view"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvEnDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="00"
+        android:textAlignment="center"
+        android:textAppearance="@android:style/TextAppearance.Medium" />
+
+    <TextView
+        android:id="@+id/tvArDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:minHeight="35dp"
+        android:text="00"
+        android:textSize="@dimen/sp12"
+        android:textAlignment="center"
+        android:textAppearance="@android:style/TextAppearance.Medium" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

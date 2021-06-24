@@ -5,7 +5,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,7 +22,7 @@ import com.shadhinlab.reminder.tools.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SetReminderCallActivity extends AppCompatActivity {
+public class SetReminderPhoneCallActivity extends AppCompatActivity {
     private SeekBar sbBeforeStart;
     private TextView tvPickingBeforeStartTime;
     private EditText edtNumber;
@@ -58,7 +57,7 @@ public class SetReminderCallActivity extends AppCompatActivity {
         myDatabase = MyDatabase.getInstance(this);
 
         edtNumber.setOnEditorActionListener((v, actionId, event) -> {
-            Utils.hideKeyboard(SetReminderCallActivity.this);
+            Utils.hideKeyboard(SetReminderPhoneCallActivity.this);
             return false;
         });
 

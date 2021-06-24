@@ -24,6 +24,7 @@ import java.util.List;
 
 import android.view.View;
 import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -32,23 +33,34 @@ public class ReminderHijriActivity extends AppCompatActivity {
 
     private TextView time;
     private String format = "";
-    private int mHour, mMinute, pickHour, pickMinute;
+    private int mHour, mMinute, pickHour, pickMinute, pickBeforeDays;
     Button btnSetReminder, btnPickTime;
     private MyAlarmManager myAlarmManager;
     private RecyclerView rvReminderHijri;
     private HijriReminderAdapter hijriReminderAdapter;
     private MyDatabase myDatabase;
     private List<MHijriReminder> hijriReminders;
+    private SeekBar sbBeforeDays;
+    TextView tvPickingBeforeDays,tvTitleBeforeDay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reminder_hijri);
 
+        init();
+        seekbarSetup();
+        display();
+    }
+
+    private void init() {
         time = findViewById(R.id.textView);
         btnSetReminder = findViewById(R.id.btnSetReminder);
         btnPickTime = findViewById(R.id.btnPickTime);
         rvReminderHijri = findViewById(R.id.rvReminderHijri);
+        sbBeforeDays = findViewById(R.id.sbBeforeDays);
+        tvPickingBeforeDays = findViewById(R.id.tvPickingBeforeDays);
+        tvTitleBeforeDay = findViewById(R.id.tvTitleBeforeDay);
         myAlarmManager = new MyAlarmManager(this);
         myDatabase = MyDatabase.getInstance(this);
         hijriReminders = new ArrayList<>();
@@ -62,9 +74,34 @@ public class ReminderHijriActivity extends AppCompatActivity {
         };
         rvReminderHijri.setLayoutManager(new LinearLayoutManager(this));
         rvReminderHijri.setAdapter(hijriReminderAdapter);
-        display();
+        tvTitleBeforeDay.setText("Before days of "+arabicEnglishMonth.getEnDate());
     }
 
+    private void seekbarSetup() {
+
+        //sb1
+        tvPickingBeforeDays.setText(pickBeforeDays + " Days");
+        sbBeforeDays.setProgress(pickBeforeDays);
+        sbBeforeDays.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//                pickBeforeDays = progress / 5;
+//                pickBeforeDays = progress * 5;
+                pickBeforeDays = progress;
+                tvPickingBeforeDays.setText(pickBeforeDays + " Days");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+    }
 
     private void timePicker() {
         // Get Current Time
@@ -87,7 +124,9 @@ public class ReminderHijriActivity extends AppCompatActivity {
 
     private void setReminder() {
         if (pickHour > 0) {
-            myAlarmManager.setAlarmDateWise(arabicEnglishMonth.getEnMonth()-1, arabicEnglishMonth.getEnDay(), pickHour, pickMinute, 0, 0, 123, Global.REMINDER_HIJRI, "", false);
+            myAlarmManager.setAlarmDateWise(arabicEnglishMonth.getEnMonth() - 1,
+                    arabicEnglishMonth.getEnDay() - pickBeforeDays, pickHour, pickMinute, 0,
+                    0, 123, Global.REMINDER_HIJRI, "", false);
             String pickTimes = Utils.getTimeConverter(Utils.timeCalculate(pickHour, pickMinute, 0));
             saveDb();
         }
@@ -102,7 +141,7 @@ public class ReminderHijriActivity extends AppCompatActivity {
     private void saveDb() {
         MHijriReminder mReminderNumber = new MHijriReminder();
         mReminderNumber.setMonth(arabicEnglishMonth.getEnMonth());
-        mReminderNumber.setDay(arabicEnglishMonth.getEnDay());
+        mReminderNumber.setDay(arabicEnglishMonth.getEnDay() - pickBeforeDays);
         mReminderNumber.setHour(pickHour);
         mReminderNumber.setMinute(pickMinute);
         mReminderNumber.setPendingId(myAlarmManager.pendingId);
