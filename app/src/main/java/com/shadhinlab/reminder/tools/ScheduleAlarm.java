@@ -3,12 +3,23 @@ package com.shadhinlab.reminder.tools;
 import android.content.Context;
 
 
+import androidx.annotation.NonNull;
+
 import com.shadhinlab.reminder.db.MyDatabase;
 import com.shadhinlab.reminder.models.MAlarm;
+import com.shadhinlab.reminder.models.MArabicEnglishMonth;
+import com.shadhinlab.reminder.models.MCallHijriCalender;
+import com.shadhinlab.reminder.models.MHijriCalender;
+import com.shadhinlab.reminder.models.MHijriReminder;
 import com.shadhinlab.reminder.models.MPrayerTime;
+import com.shadhinlab.reminder.network.ApiClient;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class ScheduleAlarm {
@@ -128,10 +139,80 @@ public class ScheduleAlarm {
         return time;
     }
 
+    public void callHijriCalender(){
+        Utils.log("Call Hijri schedule");
+        if (Utils.getPref(Global.SAVE_MONTH, 0) < Utils.getMonth()
+                || Utils.getPref(Global.SAVE_DAY, 0) < Utils.getDay()) {
+
+            if (Utils.getPref(Global.SAVE_MONTH, 0) == Utils.getMonth()
+                    && Utils.getPref(Global.SAVE_DAY, 0) < Utils.getDay()) {
+                Utils.log("get Hijri month is equal but day is smaller than current day");
+                getHijriCalender(Utils.getMonth() + 1);
+            } else {
+                Utils.log("get Hijri month is smaller than current month");
+                getHijriCalender(Utils.getMonth());
+            }
+
+        } else Utils.log("Already get Hijri");
+    }
+
+    private void getHijriCalender(int month) {
+        Utils.log("Schedule month: " + month);
+        Call<MCallHijriCalender> call = ApiClient.getInstance().getHijriMonth(month, Integer.parseInt(Utils.getYear()), 0);
+        call.enqueue(new Callback<MCallHijriCalender>() {
+            @Override
+            public void onResponse(@NonNull Call<MCallHijriCalender> call, @NonNull Response<MCallHijriCalender> response) {
+                if (response.body() != null && response.body().getData().size() > 0) {
+
+                    saveHijriCalender(response.body().getData());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MCallHijriCalender> call, @NonNull Throwable t) {
+                Utils.log("Schedule getHijriCalender onFailure: " + t.getMessage());
+            }
+        });
+    }
+
+    private void saveHijriCalender(List<MHijriCalender> hijriCalenders) {
+        myDatabase.myDao().clearHijriCalender();
+        for (int i = 0; i < hijriCalenders.size(); i++) {
+            if (hijriCalenders.get(i).getHijri().getDay().equals("13")
+                    || hijriCalenders.get(i).getHijri().getDay().equals("14")
+                    || hijriCalenders.get(i).getHijri().getDay().equals("15")) {
+                MArabicEnglishMonth arabicEnglishMonth = new MArabicEnglishMonth();
+                arabicEnglishMonth.setEnDate(hijriCalenders.get(i).getGregorian().getDate());
+                arabicEnglishMonth.setEnDay(Integer.parseInt(hijriCalenders.get(i).getGregorian().getDay()));
+                arabicEnglishMonth.setEnMonth(Integer.parseInt(hijriCalenders.get(i).getGregorian().getDate().split("-")[1]));
+                arabicEnglishMonth.setArDate(hijriCalenders.get(i).getHijri().getDate());
+                arabicEnglishMonth.setArDay(hijriCalenders.get(i).getHijri().getDay());
+                arabicEnglishMonth.setArYear(hijriCalenders.get(i).getHijri().getYear());
+                Utils.log("Schedule Pick Date: " + hijriCalenders.get(i).getGregorian().getDate());
+                myDatabase.myDao().saveHijriCalender(arabicEnglishMonth);
+            }
+
+        }
+        nextHijriReminder();
+    }
+
+    private void nextHijriReminder() {
+        List<MHijriReminder> hijriReminders = myDatabase.myDao().getHijriReminder();
+        List<MArabicEnglishMonth> hijriCalenders = myDatabase.myDao().getHijriCalender();
+        if (hijriReminders.size() > 0 && hijriCalenders.size() > 0) {
+            for (int i = 0; i < hijriReminders.size(); i++) {
+                myAlarmManager.setAlarmDateWise(hijriCalenders.get(i).getEnMonth(),
+                        hijriCalenders.get(i).getEnDay(),
+                        hijriReminders.get(i).getHour(), hijriReminders.get(i).getMinute(), 0, 0,
+                        hijriReminders.get(i).getPendingId(), Global.REMINDER_HIJRI, "", true);
+            }
+        }
+    }
+
     public void nextWaktoAlarm(int prayerWakto, int pendingId) {
-        Utils.log("Next Day prayer: " + getTomorrowPrayerStartTime(prayerWakto));
+        Utils.log("Schedule Next Day prayer: " + getTomorrowPrayerStartTime(prayerWakto));
         List<MAlarm> alarmList = myDatabase.myDao().getAlarmByWakto(prayerWakto, pendingId);
-        Utils.log("Alarm size: " + alarmList.size() + " : " + pendingId);
+        Utils.log("Schedule Alarm size: " + alarmList.size() + " : " + pendingId);
         if (!getTomorrowPrayerStartTime(prayerWakto).isEmpty()) {
 
 

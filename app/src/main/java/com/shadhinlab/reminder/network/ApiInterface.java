@@ -26,6 +26,8 @@ public interface ApiInterface {
             @Query("method") int method);
 
     @GET("v1/gToHCalendar/{month}/{year}")
-    Call<MCallHijriCalender> getHijriMonth(@Path("month") int month, @Path("year") int year);
+    Call<MCallHijriCalender> getHijriMonth(@Path("month") int month,
+                                           @Path("year") int year,
+                                           @Query("adjustment") int adjustment);
 }
 

@@ -5,10 +5,10 @@ import androidx.room.PrimaryKey;
 
 @Entity(tableName = "hijri_reminder")
 public class MHijriReminder {
-    private String reminderTime;
     @PrimaryKey(autoGenerate = true)
     private int id;
-    private int hour, minute;
+    private int hour, minute, day, month, pendingId;
+    private String reminderTime;
 
     public String getReminderTime() {
         return reminderTime;
@@ -40,5 +40,29 @@ public class MHijriReminder {
 
     public void setMinute(int minute) {
         this.minute = minute;
+    }
+
+    public int getDay() {
+        return day;
+    }
+
+    public void setDay(int day) {
+        this.day = day;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
+    }
+
+    public int getPendingId() {
+        return pendingId;
+    }
+
+    public void setPendingId(int pendingId) {
+        this.pendingId = pendingId;
     }
 }

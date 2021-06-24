@@ -9,6 +9,7 @@ public class Global {
     public static final String PRAYER_WAKTO = "PrayerWakto";
     public static final String REMINDER_CALL = "Call";
     public static final String REMINDER_NUMBER = "reminderNumber";
+    public static final String REMINDER_HIJRI = "reminderHijri";
     public static final String REMINDER_NEXT_CALL = "nextCall";
     public static final String PRAYER_WAKTO_NAME = "PrayerWaktoName";
     public static final String SUNRISE_TOMORROW = "sunriseTomorrow";

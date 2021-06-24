@@ -156,6 +156,7 @@ public class MyAlarmManager {
     }
 
     public void setAlarmDateWise(int month, int date, int hour, int min, int pickTime, int prayerWakto, int intentId, String contentValue, String reminderNumber, boolean isEdit) {
+       Utils.log("set month: "+month);
         Calendar calendar = Calendar.getInstance();
 //        Utils.log("Current Month: "+calendar.get(Calendar.MONTH));
         calendar.set(Calendar.MONTH, month);

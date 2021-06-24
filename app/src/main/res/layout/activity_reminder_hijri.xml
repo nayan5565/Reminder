@@ -19,22 +19,26 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/dp24"
+        android:layout_marginStart="@dimen/dp10"
+        android:layout_marginTop="@dimen/dp20"
+        android:layout_marginEnd="@dimen/dp10"
         android:text="@string/time_save" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="@string/time_selected"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/dp10"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <Button
         android:id="@+id/btnSetReminder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_marginStart="@dimen/dp10"
+        android:layout_marginTop="@dimen/dp10"
+        android:layout_marginEnd="@dimen/dp10"
         android:text="Set Reminder" />
 
     <androidx.recyclerview.widget.RecyclerView

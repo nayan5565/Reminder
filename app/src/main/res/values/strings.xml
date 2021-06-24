@@ -31,7 +31,7 @@
     <string name="time_picker_example">Time Picker Example</string>
     <string name="time_pick">Pick the time and press save button</string>
     <string name="time_save">Pick Time</string>
-    <string name="time_selected"></string>
+    <string name="time_selected">Time selected</string>
     <string name="time_current">The Time is:</string>
 
     <string name="switch_turn_on_title">Sunrise Alarm</string>

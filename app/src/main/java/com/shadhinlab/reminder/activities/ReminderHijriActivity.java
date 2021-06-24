@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 
@@ -13,6 +14,7 @@ import com.shadhinlab.reminder.db.MyDatabase;
 import com.shadhinlab.reminder.models.MArabicEnglishMonth;
 import com.shadhinlab.reminder.models.MHijriReminder;
 import com.shadhinlab.reminder.models.MReminderNumber;
+import com.shadhinlab.reminder.tools.Global;
 import com.shadhinlab.reminder.tools.MyAlarmManager;
 import com.shadhinlab.reminder.tools.Utils;
 
@@ -76,17 +78,18 @@ public class ReminderHijriActivity extends AppCompatActivity {
         timePickerDialog.show();
     }
 
+    @SuppressLint("SetTextI18n")
     private void showTime(int hourOfDay, int minute) {
         pickHour = hourOfDay;
         pickMinute = minute;
-        time.setText(hourOfDay + ":" + minute);
+        time.setText("Time selected: " + hourOfDay + ":" + minute);
     }
 
     private void setReminder() {
         if (pickHour > 0) {
-            myAlarmManager.setAlarmDateWise(arabicEnglishMonth.getEnMonth(), arabicEnglishMonth.getEnDay(), pickHour, pickMinute, 0, 0, 123, "reminderHijri", "", false);
+            myAlarmManager.setAlarmDateWise(arabicEnglishMonth.getEnMonth()-1, arabicEnglishMonth.getEnDay(), pickHour, pickMinute, 0, 0, 123, Global.REMINDER_HIJRI, "", false);
             String pickTimes = Utils.getTimeConverter(Utils.timeCalculate(pickHour, pickMinute, 0));
-            saveDb(pickHour, pickMinute, Utils.getDateTimeConverter(myAlarmManager.getTime));
+            saveDb();
         }
     }
 
@@ -96,13 +99,19 @@ public class ReminderHijriActivity extends AppCompatActivity {
         hijriReminderAdapter.setData(hijriReminders);
     }
 
-    private void saveDb(int hour, int minute, String reminderTime) {
+    private void saveDb() {
         MHijriReminder mReminderNumber = new MHijriReminder();
-        mReminderNumber.setHour(hour);
-        mReminderNumber.setMinute(minute);
-        mReminderNumber.setReminderTime(reminderTime);
+        mReminderNumber.setMonth(arabicEnglishMonth.getEnMonth());
+        mReminderNumber.setDay(arabicEnglishMonth.getEnDay());
+        mReminderNumber.setHour(pickHour);
+        mReminderNumber.setMinute(pickMinute);
+        mReminderNumber.setPendingId(myAlarmManager.pendingId);
+        mReminderNumber.setReminderTime(Utils.getDateTimeConverter(myAlarmManager.getTime));
         myDatabase.myDao().saveHijriReminder(mReminderNumber);
         Utils.showToast("Save");
+        time.setText("");
+        pickHour = 0;
+        pickMinute = 0;
         display();
     }
 }

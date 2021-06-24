@@ -47,7 +47,7 @@ public abstract class HijriReminderAdapter extends RecyclerView.Adapter<HijriRem
     @Override
     public void onBindViewHolder(@NonNull HijriReminderAdapter.MyViewHolder holder, final int position) {
         MHijriReminder mReminderNumber = mHijriReminders.get(position);
-        holder.tvDay.setText(mReminderNumber.getReminderTime());
+        holder.tvDay.setText("Set reminder "+mReminderNumber.getReminderTime());
         holder.tvDay.setTextColor(Color.WHITE);
 //        holder.relDay.setBackgroundResource(R.drawable.circle_unselect);
 
