@@ -51,7 +51,7 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
 
             dismissAlarmNotificationController = new DismissAlarmNotificationController(context);
 
-            if (contentValue.equals("Call")) {
+            if (contentValue.equals(Global.REMINDER_CALL)) {
 
                 //Open call function
                 if (reminderNumbers.size() > 0)

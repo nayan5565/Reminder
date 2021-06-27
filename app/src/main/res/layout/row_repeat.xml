@@ -4,25 +4,37 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/dp10"
-    app:cardCornerRadius="@dimen/dp10"
-    app:cardBackgroundColor="@color/teal_700">
+    app:cardBackgroundColor="@color/teal_700"
+    app:cardCornerRadius="@dimen/dp10">
 
 
-    <RelativeLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/relDay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="@dimen/dp5">
+        android:layout_margin="@dimen/dp5"
+        android:orientation="horizontal"
+        android:weightSum="2">
 
         <TextView
             android:id="@+id/tvDayName"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:layout_weight="1"
             android:textColor="@color/white"
             android:textSize="@dimen/sp16" />
-    </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tvAlarmType"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp16" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 
 </androidx.cardview.widget.CardView>

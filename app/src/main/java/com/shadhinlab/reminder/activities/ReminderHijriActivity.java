@@ -47,7 +47,7 @@ public class ReminderHijriActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reminder_hijri);
-
+        MainActivity.isSettings=false;
         init();
         seekbarSetup();
         display();

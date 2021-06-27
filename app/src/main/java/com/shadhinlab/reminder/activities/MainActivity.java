@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.icu.util.IslamicCalendar;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -16,7 +15,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -50,15 +48,14 @@ import com.shadhinlab.reminder.db.MyDatabase;
 import com.shadhinlab.reminder.network.ApiClient;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, MyCalendarView.OnDateSetListener {
+    public static boolean isSettings = false;
     private int PERMISSIONS_REQUEST_LOCATION = 44, LOCATION_SETTINGS = 1, PERMISSIONS_REQUEST_PHONE_CALL = 2, PERMISSIONS_REQUEST_PHONE_STATE = 3;
     private TextView tvFazarTime, tvDuhurTime, tvAsarTime, tvMagribTime, tvSet, tvSet2, tvSet3,
             tvIshaTime, tvEnDate, tvEnDate2, tvEnDate3, tvArDate, tvArDate2, tvArDate3;
@@ -518,7 +515,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onRestart();
         prayerMethod = Utils.getPref(Global.PRAYER_METHOD, 1);
         Utils.log("PrayerMethod: " + prayerMethod);
-        getLocation();
+        if (isSettings)
+            getLocation();
     }
 
     @Override
@@ -537,6 +535,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             case R.id.actionCalender:
+                MainActivity.isSettings=false;
                 showCalender();
                 return true;
             case R.id.actionReminderPhone:
@@ -544,7 +543,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                myAlarmManager.setTestAlarm(0, 0, Utils.getMinute() + 1, 0, 1, 123, "Call", false);
 //                //Open call function
 //                Utils.call("0191355565");
-                startActivity(new Intent(MainActivity.this, SetReminderPhoneCallActivity.class)
+                startActivity(new Intent(MainActivity.this, SetPhoneCallReminderActivity.class)
                         .putExtra(Global.PRAYER_START_TIME, mPrayerTime.getStartFajr()));
                 return true;
             default:
@@ -569,7 +568,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void goToReminderActivity(int prayerWakto, String prayerStartTime, String prayerEndTime, String prayerWaktoName) {
-        startActivity(new Intent(this, SetReminderActivity.class)
+        startActivity(new Intent(this, SetPrayerReminderActivity.class)
                 .putExtra(Global.PRAYER_WAKTO, prayerWakto)
                 .putExtra(Global.PRAYER_START_TIME, prayerStartTime)
                 .putExtra(Global.PRAYER_END_TIME, prayerEndTime)

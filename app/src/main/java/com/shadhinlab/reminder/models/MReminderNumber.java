@@ -8,7 +8,7 @@ public class MReminderNumber {
     private String number, reminderTime;
     @PrimaryKey(autoGenerate = true)
     private int id;
-    private int hour, minute, pickedBeforeTime;
+    private int hour, minute, pickedBeforeTime, alarmType, day, month;
 
     public String getReminderTime() {
         return reminderTime;
@@ -56,5 +56,29 @@ public class MReminderNumber {
 
     public void setPickedBeforeTime(int pickedBeforeTime) {
         this.pickedBeforeTime = pickedBeforeTime;
+    }
+
+    public int getAlarmType() {
+        return alarmType;
+    }
+
+    public void setAlarmType(int alarmType) {
+        this.alarmType = alarmType;
+    }
+
+    public int getDay() {
+        return day;
+    }
+
+    public void setDay(int day) {
+        this.day = day;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
     }
 }

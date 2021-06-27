@@ -77,7 +77,7 @@ public class MyAlarmManager {
             minutes = calendar.get(Calendar.MINUTE);
             pendingId = (int) calendar.getTime().getTime();
         }
-
+        getTime = calendar.getTime();
         Log.e("Alarm single", "Calendar " + calendar.getTime() + " long : " + calendar.getTime().getTime() + " pendingId : " + pendingId);
 
 
@@ -156,7 +156,7 @@ public class MyAlarmManager {
     }
 
     public void setAlarmDateWise(int month, int date, int hour, int min, int pickTime, int prayerWakto, int intentId, String contentValue, String reminderNumber, boolean isEdit) {
-       Utils.log("set month: "+month);
+        Utils.log("set month: " + month);
         Calendar calendar = Calendar.getInstance();
 //        Utils.log("Current Month: "+calendar.get(Calendar.MONTH));
         calendar.set(Calendar.MONTH, month);
@@ -178,11 +178,12 @@ public class MyAlarmManager {
         } else
             pendingId = (int) calendar.getTime().getTime();
         getTime = calendar.getTime();
-        Utils.log("Set date wise Alarm " + calendar.getTime() + " long : " + calendar.getTime().getTime() + " pendingId : " + pendingId);
+        Utils.log("Set date wise Alarm single " + calendar.getTime() + " long : " + calendar.getTime().getTime() + " pendingId : " + pendingId);
 
 //        AlarmManager alarmManager = (AlarmManager) activity.getSystemService(ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTimeLong, pendingIntent(pendingId, prayerWakto, contentValue, reminderNumber));
     }
+
 
     public void setAlarmRepeatWeekly(int day, int hour, int min, int pickTime, int intentId, String contentValue, boolean isEdit, int alarmID) {
         Calendar calendar = Calendar.getInstance();
@@ -332,6 +333,67 @@ public class MyAlarmManager {
 
 //        Toast.makeText(this, "Alarm Set." + calendar.getTime(), Toast.LENGTH_LONG).show();
 
+    }
+
+    public void setAlarmDateWiseEveryDay(int month, int date, int hour, int min, int pickTime, int prayerWakto, int intentId, String contentValue, String reminderNumber, boolean isEdit) {
+        Utils.log("set month: " + month);
+        Calendar calendar = Calendar.getInstance();
+//        Utils.log("Current Month: "+calendar.get(Calendar.MONTH));
+        if (date > 0) {
+            calendar.set(Calendar.MONTH, month);
+            calendar.set(Calendar.DAY_OF_MONTH, date);
+        }
+
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, min - pickTime);
+        calendar.set(Calendar.SECOND, 0);
+
+
+        if (calendar.before(new GregorianCalendar())) {
+            Utils.log("Before");
+            calendar.add(GregorianCalendar.MONTH, 1);
+//            calendar.add(GregorianCalendar.DAY_OF_MONTH, 30);
+        }
+
+        alarmTimeLong = calendar.getTime().getTime();
+        if (isEdit) {
+            pendingId = intentId;
+        } else
+            pendingId = (int) calendar.getTime().getTime();
+        getTime = calendar.getTime();
+        Utils.log("Set date wise Alarm every day " + calendar.getTime() + " long : " + calendar.getTime().getTime() + " pendingId : " + pendingId);
+
+//        AlarmManager alarmManager = (AlarmManager) activity.getSystemService(ALARM_SERVICE);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, alarmTimeLong, AlarmManager.INTERVAL_DAY, pendingIntent(pendingId, prayerWakto, contentValue, reminderNumber));
+    }
+
+    public void setAlarmDateWiseWeekly(int month, int date, int hour, int min, int pickTime, int prayerWakto, int intentId, String contentValue, String reminderNumber, boolean isEdit) {
+        Utils.log("set month: " + month);
+        Calendar calendar = Calendar.getInstance();
+//        Utils.log("Current Month: "+calendar.get(Calendar.MONTH));
+        if (date > 0) {
+            calendar.set(Calendar.MONTH, month);
+            calendar.set(Calendar.DAY_OF_MONTH, date);
+        }
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, min - pickTime);
+        calendar.set(Calendar.SECOND, 0);
+
+
+        if (calendar.before(new GregorianCalendar())) {
+            calendar.add(GregorianCalendar.DAY_OF_MONTH, 7);
+        }
+
+        alarmTimeLong = calendar.getTime().getTime();
+        if (isEdit) {
+            pendingId = intentId;
+        } else
+            pendingId = (int) calendar.getTime().getTime();
+        getTime = calendar.getTime();
+        Utils.log("Set date wise Alarm weekly " + calendar.getTime() + " long : " + calendar.getTime().getTime() + " pendingId : " + pendingId);
+
+//        AlarmManager alarmManager = (AlarmManager) activity.getSystemService(ALARM_SERVICE);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, alarmTimeLong, intervalWeek, pendingIntent(pendingId, prayerWakto, contentValue, reminderNumber));
     }
 
     public void setAlarmSnooze(long alarmtime, int intentId, int snooze, int alarmNumber) {

@@ -7,7 +7,7 @@ public class Global {
     public static final String PRAYER_START_TIME = "PrayerStartTime";
     public static final String PRAYER_END_TIME = "PrayerEndTime";
     public static final String PRAYER_WAKTO = "PrayerWakto";
-    public static final String REMINDER_CALL = "Call";
+    public static final String REMINDER_CALL = "reminderCall";
     public static final String REMINDER_NUMBER = "reminderNumber";
     public static final String REMINDER_HIJRI = "reminderHijri";
     public static final String REMINDER_NEXT_CALL = "nextCall";

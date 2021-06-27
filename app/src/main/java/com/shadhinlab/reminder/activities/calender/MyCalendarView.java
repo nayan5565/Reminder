@@ -25,6 +25,7 @@ import android.widget.Toast;
 import androidx.core.view.ViewCompat;
 
 import com.shadhinlab.reminder.R;
+import com.shadhinlab.reminder.tools.Utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -458,6 +459,17 @@ public class MyCalendarView extends Dialog implements View.OnClickListener {
         yearTextView.setTextColor(context.getResources().getColor(R.color.colorPrimary));
     }
 
+    private void pickDateFromCalender() {
+        int dmy[] = calendarInstance.getSelectedDayMonthYear();
+        int year = dmy[2];
+        int month = dmy[1];
+        int day = dmy[0];
+        onDateSetListener.onDateSet(year,
+                month,
+                day
+        );
+    }
+
     private void initListener() {
 
         relative_previous.setOnClickListener(view -> {
@@ -476,17 +488,18 @@ public class MyCalendarView extends Dialog implements View.OnClickListener {
 
         tv_done.setOnClickListener(view -> {
 
-            int dmy[] = calendarInstance.getSelectedDayMonthYear();
-            int year = dmy[2];
-            int month = dmy[1];
-            int day = dmy[0];
-            onDateSetListener.onDateSet(year,
-                    month,
-                    day
-            );
+           pickDateFromCalender();
             MyCalendarView.this.dismiss();
 
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Utils.log("Dialog back pressed");
+        pickDateFromCalender();
+
     }
 
     public void previous() {

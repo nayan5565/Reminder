@@ -81,7 +81,7 @@ public class DismissActivity extends AppCompatActivity implements RingtonePlayer
             }
         };
         fireAlarmPopup.showTestAlarm();
-        if (contentValue.equals("Call"))
+        if (contentValue.equals(Global.REMINDER_CALL))
             Utils.call("1955206144");
         confirmationPopup = new ConfirmationPopup(this, "Did you really wake up?") {
             @Override

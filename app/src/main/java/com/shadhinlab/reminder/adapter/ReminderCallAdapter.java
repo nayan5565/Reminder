@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 
@@ -49,7 +50,10 @@ public abstract class ReminderCallAdapter extends RecyclerView.Adapter<ReminderC
     @Override
     public void onBindViewHolder(@NonNull ReminderCallAdapter.MyViewHolder holder, final int position) {
         MReminderNumber mReminderNumber = mReminderNumbers.get(position);
-        holder.tvDay.setText(mReminderNumber.getNumber()+"\n"+mReminderNumber.getReminderTime());
+        holder.tvDay.setText(mReminderNumber.getNumber() + "\n" + mReminderNumber.getReminderTime());
+        String alarmType = mReminderNumber.getAlarmType() < 1 ? "Single day" :
+                mReminderNumber.getAlarmType() == 1 ? "Every day" : "Weekly";
+        holder.tvAlarmType.setText("Alarm type\n" + alarmType);
         holder.tvDay.setTextColor(Color.WHITE);
 //        holder.relDay.setBackgroundResource(R.drawable.circle_unselect);
 
@@ -65,12 +69,13 @@ public abstract class ReminderCallAdapter extends RecyclerView.Adapter<ReminderC
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvDay;
-        RelativeLayout relDay;
+        TextView tvDay, tvAlarmType;
+        LinearLayoutCompat relDay;
 
         MyViewHolder(View itemView) {
             super(itemView);
             tvDay = itemView.findViewById(R.id.tvDayName);
+            tvAlarmType = itemView.findViewById(R.id.tvAlarmType);
             relDay = itemView.findViewById(R.id.relDay);
         }
     }

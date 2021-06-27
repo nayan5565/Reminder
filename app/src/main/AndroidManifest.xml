@@ -35,10 +35,11 @@
         tools:node="replace"
         tools:targetApi="n">
         <activity android:name=".activities.ReminderHijriActivity" />
-        <activity android:name=".activities.SetReminderPhoneCallActivity" />
+        <activity
+            android:name=".activities.SetPhoneCallReminderActivity"
+            android:windowSoftInputMode="stateHidden" />
         <activity android:name=".activities.SettingsActivity" />
-        <activity android:name=".activities.LocationActivity" />
-        <activity android:name=".activities.SetReminderActivity" />
+        <activity android:name=".activities.SetPrayerReminderActivity" />
         <activity android:name=".activities.DismissActivity" />
         <activity android:name=".activities.MainActivity">
             <intent-filter>

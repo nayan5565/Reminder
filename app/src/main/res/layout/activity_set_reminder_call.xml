@@ -5,14 +5,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activities.SetReminderPhoneCallActivity">
+    android:padding="@dimen/dp16"
+    tools:context=".activities.SetPhoneCallReminderActivity">
+
+    <TextView
+        android:id="@+id/tvPickDate"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp50"
+        android:background="@drawable/rounded_edit_text"
+        android:gravity="center"
+        android:text="Pick Date"
+        android:textSize="@dimen/sp18" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp16"
         android:gravity="center"
         android:orientation="horizontal"
         android:weightSum="4">
+
 
         <TextView
             android:layout_width="0dp"
@@ -22,7 +34,7 @@
             android:layout_weight="1"
             android:background="@drawable/rounded_edit_text"
             android:gravity="center"
-            android:text="+880" />
+            android:text="+88" />
 
         <EditText
             android:id="@+id/edtNumber"
@@ -37,6 +49,13 @@
             android:padding="@dimen/dp6" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
+    <TextView
+        android:id="@+id/tvTitleBeforeStartTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp16"
+        android:text="before Fajr: "
+        android:textSize="@dimen/sp18" />
 
     <SeekBar
         android:id="@+id/sbBeforeStart"
@@ -64,6 +83,42 @@
         android:textSize="@dimen/sp18"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/sbBeforeStart" />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp64"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rbSingleDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:onClick="onRadioButtonClicked"
+            android:text="Single day"
+            android:textSize="@dimen/sp18"
+            tools:ignore="UsingOnClickInXml" />
+
+        <RadioButton
+            android:id="@+id/rbEveryDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:onClick="onRadioButtonClicked"
+            android:text="Every day"
+            android:textSize="@dimen/sp18"
+            tools:ignore="UsingOnClickInXml" />
+
+        <RadioButton
+            android:id="@+id/rbWeekly"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:onClick="onRadioButtonClicked"
+            android:text="Weekly"
+            android:textSize="@dimen/sp18"
+            tools:ignore="UsingOnClickInXml" />
+    </RadioGroup>
 
     <Button
         android:id="@+id/btnSetNumber"

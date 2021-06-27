@@ -2,10 +2,10 @@ package com.shadhinlab.reminder.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 
 import com.shadhinlab.reminder.R;
 import com.shadhinlab.reminder.tools.Global;
@@ -18,14 +18,15 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        MainActivity.isSettings=true;
         init();
         display();
     }
 
     private void init() {
-        rb1 = findViewById(R.id.rb1);
-        rb2 = findViewById(R.id.rb2);
-        rb3 = findViewById(R.id.rb3);
+        rb1 = findViewById(R.id.rbSingleDay);
+        rb2 = findViewById(R.id.rbEveryDay);
+        rb3 = findViewById(R.id.rbWeekly);
         rb4 = findViewById(R.id.rb4);
         rb5 = findViewById(R.id.rb5);
         rb6 = findViewById(R.id.rb6);
@@ -268,21 +269,22 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("NonConstantResourceId")
     public void onRadioButtonClicked(View view) {
         // Is the button now checked?
         boolean checked = ((RadioButton) view).isChecked();
 
         // Check which radio button was clicked
         switch (view.getId()) {
-            case R.id.rb1:
+            case R.id.rbSingleDay:
                 if (checked)
                     Utils.savePref(Global.PRAYER_METHOD, 0);
                 break;
-            case R.id.rb2:
+            case R.id.rbEveryDay:
                 if (checked)
                     Utils.savePref(Global.PRAYER_METHOD, 1);
                 break;
-            case R.id.rb3:
+            case R.id.rbWeekly:
                 if (checked)
                     Utils.savePref(Global.PRAYER_METHOD, 2);
                 break;

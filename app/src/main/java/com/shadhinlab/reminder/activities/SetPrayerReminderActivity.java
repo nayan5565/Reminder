@@ -23,7 +23,7 @@ import com.shadhinlab.reminder.tools.VibratePlayer;
 
 import java.util.List;
 
-public class SetReminderActivity extends AppCompatActivity implements RingtonePlayer.OnFinishListener {
+public class SetPrayerReminderActivity extends AppCompatActivity implements RingtonePlayer.OnFinishListener {
     public static MAlarm updateAlarm;
     private int pickBeforeStartTime, pickAfterStartTime, pickBeforeEndTime,
             pickAfterEndTime, alarmSize = 0, prayerWakto;
@@ -45,6 +45,7 @@ public class SetReminderActivity extends AppCompatActivity implements RingtonePl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_reminder);
+        MainActivity.isSettings=false;
         init();
         seekbarSetup();
 //        myAlarmManager.setSingleAlarm(16, 23, 3, prayerWakto, 123, "", false, false);
@@ -113,7 +114,7 @@ public class SetReminderActivity extends AppCompatActivity implements RingtonePl
 //        Utils.changeStatusBarOthers(SetAlarmActivity.this, Color.TRANSPARENT);
         vibratePlayer = new VibratePlayer(this);
         fireAlarmPopup.showTestAlarm();
-        ringtonePlayer = new RingtonePlayer(SetReminderActivity.this);
+        ringtonePlayer = new RingtonePlayer(SetPrayerReminderActivity.this);
         ringtonePlayer.start();
         vibratePlayer.vibrateStart();
     }
