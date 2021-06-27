@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".activities.MainActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".activities.MainActivity">
     <item
         android:id="@+id/actionSettings"
-        android:title="@string/preferences_title"
-        app:showAsAction="never"/>
+        android:title="@string/menuSettings"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/actionReminderPhone"
+        android:title="@string/menuReminderPhone"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/actionCalender"
+        android:title="@string/menuCalender"
+        app:showAsAction="never" />
+
 </menu>

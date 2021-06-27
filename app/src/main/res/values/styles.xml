@@ -11,6 +11,11 @@
         <!--        <item name="android:windowLightStatusBar">true</item>-->
     </style>
 
+    <style name="toolbarDotColor">
+        <item name="android:textColorSecondary">@color/white</item>
+
+    </style>
+
     <style name="Theme.Transparent" parent="Theme.AppCompat">
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowIsTranslucent">true</item>
@@ -51,7 +56,6 @@
     <style name="full_screen_dialog">
 
 
-
         <!-- This is important! Don't forget to set window background -->
 
         <!-- Additionally if you want animations when dialog opening -->
@@ -72,5 +76,11 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">8sp</item>
     </style>
+
+    <style name="Theme.CustomDialog" parent="android:style/Theme.Dialog">
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
 
 </resources>

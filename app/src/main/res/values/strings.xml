@@ -4,7 +4,9 @@
     <string name="interval_dialog_title">Enter interval between alarms:</string>
     <string name="all_minutes">minutes</string>
     <string name="number_dialog_title">Enter number of alarms:</string>
-    <string name="preferences_title">Settings</string>
+    <string name="menuSettings">Settings</string>
+    <string name="menuCalender">Hijri Calender</string>
+    <string name="menuReminderPhone">Reminder Phone Call</string>
     <string name="preferences_duration_title">Duration of a ringtone and vibrate</string>
     <string name="preferences_ringtone_title">Choose ringtone</string>
     <string name="preferences_default_duration">30 seconds</string>
@@ -15,8 +17,8 @@
     <string name="timepicker_dialog_title">Set time of the first alarm:</string>
     <string name="all_time_left">%1$s hr %2$s min left</string>
     <string name="notification_icon_title">Alarms turned on</string>
-    <string name="main_firstalarm_time">First alarm time: %1$s</string>
-    <string name="chooseringtone_chooser_title">Select a file</string>
+    <string name="main_first_alarm_time">First alarm time: %1$s</string>
+    <string name="choose_ringtone_chooser_title">Select a file</string>
 
     <string name="dismiss_alarm_notification_title">Alarm!</string>
     <string name="dismiss_alarm_notification_body">You\'ve set an alarm to %1$s</string>
@@ -92,4 +94,102 @@
         <item quantity="one">%1$s alarm</item>
         <item quantity="other">%1$s alarms</item>
     </plurals>
+
+    // calender
+
+    <string name="hijri_date_picker_done" translatable="false">Done</string>
+    <string name="hijri_date_picker_cancel" translatable="false">Cancel</string>
+    <string name="hijri_date_picker_year" translatable="false">Year</string>
+    <string name="January" translatable="false">January</string>
+    <string name="February" translatable="false">February</string>
+    <string name="March" translatable="false">March</string>
+    <string name="April" translatable="false">April</string>
+    <string name="May" translatable="false">May</string>
+    <string name="June" translatable="false">June</string>
+    <string name="July" translatable="false">July</string>
+    <string name="August" translatable="false">August</string>
+    <string name="September" translatable="false">September</string>
+    <string name="October" translatable="false">October</string>
+    <string name="November" translatable="false">November</string>
+    <string name="December" translatable="false">December</string>
+
+    <string-array name="hijri_date_picker_days">
+        <item>SUN</item>
+        <item>MON</item>
+        <item>TUE</item>
+        <item>WED</item>
+        <item>THU</item>
+        <item>FRI</item>
+        <item>SAT</item>
+    </string-array>
+
+
+    <string name="hijri_date_picker_cancel_arabic" translatable="false">الغاء</string>
+    <string name="dhu_alhijjah" translatable="false">Dhu al-Hijjah</string>
+    <!--    <string name="dhu_alhijjah" translatable="false">ذو الحجة</string>-->
+    <string name="hijri_date_picker_done_arabic" translatable="false">موافق</string>
+    <string name="dhu_alqadah" translatable="false">Dhu al-Qi\'dah</string>
+    <!--    <string name="dhu_alqadah" translatable="false">ذو القعدة</string>-->
+    <string name="jamada_i" translatable="false">Jumada al-awwal</string>
+    <!--    <string name="jamada_i" translatable="false">جماد الاول</string>-->
+    <string name="jamada_ii" translatable="false">Jumada al-thani</string>
+    <!--    <string name="jamada_ii" translatable="false">جماد الثاني</string>-->
+    <string name="muharram" translatable="false">Muharram</string>
+    <!--    <string name="muharram" translatable="false">محرم</string>-->
+    <string name="rabi_i" translatable="false">Rabi\' al-awwal</string>
+    <!--    <string name="rabi_i" translatable="false">ربيع الاول</string>-->
+    <string name="rabi_ii" translatable="false">Rabi\' al-thani</string>
+    <!--    <string name="rabi_ii" translatable="false">ربيع الثاني</string>-->
+    <string name="rajab" translatable="false">Rajab</string>
+    <!--    <string name="rajab" translatable="false">رجب</string>-->
+    <string name="ramadan" translatable="false">Ramadan</string>
+    <!--    <string name="ramadan" translatable="false">رمضان</string>-->
+    <string name="safar" translatable="false">Safar</string>
+    <!--    <string name="safar" translatable="false">صفر</string>-->
+    <string name="shaban" translatable="false">Sha\'aban</string>
+    <!--    <string name="shaban" translatable="false">شعبان</string>-->
+    <string name="shawal" translatable="false">Shawwal</string>
+    <!--    <string name="shawal" translatable="false">شوال</string>-->
+    <string name="hijri_date_picker_year_arabic" translatable="false">السنة</string>
+    <string-array name="hijri_date_picker_days_arabic">
+        <item>SUN</item>
+        <item>MON</item>
+        <item>TUE</item>
+        <item>WED</item>
+        <item>THU</item>
+        <item>FRI</item>
+        <item>SAT</item>
+    </string-array>
+
+    <!--    <string-array name="hijri_date_picker_days_arabic">-->
+    <!--        <item>TUE</item>-->
+    <!--        <item>WED</item>-->
+    <!--        <item>THU</item>-->
+    <!--        <item>FRI</item>-->
+    <!--        <item>SAT</item>-->
+    <!--        <item>SUN</item>-->
+    <!--        <item>MON</item>-->
+    <!--    </string-array>-->
+
+    <!--    <string-array name="hijri_date_picker_days_arabic">-->
+    <!--        <item>الاحد</item>-->
+    <!--        <item>الاثنين</item>-->
+    <!--        <item>الثلاثاء</item>-->
+    <!--        <item>الاربعاء</item>-->
+    <!--        <item>الخميس</item>-->
+    <!--        <item>الجمعة</item>-->
+    <!--        <item>السبت</item>-->
+    <!--    </string-array>-->
+
+    <!--<string name="calendar_confirm">Confirm</string>-->
+    <string name="date_time_header">Date and Time</string>
+
+    <string name="search" translatable="false">Search&#8230;</string>
+
+    <string name="time_text">TIME</string>
+    <string name="calendar_confirm">DONE</string>
+    <string name="header_calendar">Calendar</string>
+    <string name="calendar_cancel">Cancel</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

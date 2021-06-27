@@ -34,6 +34,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.shadhinlab.reminder.R;
+import com.shadhinlab.reminder.activities.calender.MyCalendarView;
 import com.shadhinlab.reminder.models.MAlarm;
 import com.shadhinlab.reminder.models.MArabicEnglishMonth;
 import com.shadhinlab.reminder.models.MCallHijriCalender;
@@ -57,7 +58,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, MyCalendarView.OnDateSetListener {
     private int PERMISSIONS_REQUEST_LOCATION = 44, LOCATION_SETTINGS = 1, PERMISSIONS_REQUEST_PHONE_CALL = 2, PERMISSIONS_REQUEST_PHONE_STATE = 3;
     private TextView tvFazarTime, tvDuhurTime, tvAsarTime, tvMagribTime, tvSet, tvSet2, tvSet3,
             tvIshaTime, tvEnDate, tvEnDate2, tvEnDate3, tvArDate, tvArDate2, tvArDate3;
@@ -73,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Toolbar toolbar;
     private int prayerMethod = 1;
     private List<String> reqPerm;
-    private Button btnAutoCall;
     List<MArabicEnglishMonth> arabicEnglishMonths;
 
 
@@ -82,7 +82,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Utils.hijriDate();
         Utils.log("ct: " + Utils.getTodaysTime24Fomat());
         Utils.log("Diff: " + Utils.calculateMinutes("03:44", Utils.getTodaysTime24Fomat()));
         init();
@@ -127,7 +126,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         prayerMethod = Utils.getPref(Global.PRAYER_METHOD, 1);
         toolbar = findViewById(R.id.toolbar);
         tvFazarTime = findViewById(R.id.tvFajrTime);
-        btnAutoCall = findViewById(R.id.btnAutoCall);
         tvIshaTime = findViewById(R.id.tvIshaTime);
         tvDuhurTime = findViewById(R.id.tvDhuhrTime);
         tvAsarTime = findViewById(R.id.tvAsrTime);
@@ -227,7 +225,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvSetAsrTime.setOnClickListener(this);
         tvSetMaghribTime.setOnClickListener(this);
         tvSetIshaTime.setOnClickListener(this);
-        btnAutoCall.setOnClickListener(this);
         tvSet.setOnClickListener(this);
         tvSet2.setOnClickListener(this);
         tvSet3.setOnClickListener(this);
@@ -531,6 +528,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -538,9 +536,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.actionSettings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
+            case R.id.actionCalender:
+                showCalender();
+                return true;
+            case R.id.actionReminderPhone:
+                //                Utils.log("Minute: " + Utils.getMinute());
+//                myAlarmManager.setTestAlarm(0, 0, Utils.getMinute() + 1, 0, 1, 123, "Call", false);
+//                //Open call function
+//                Utils.call("0191355565");
+                startActivity(new Intent(MainActivity.this, SetReminderPhoneCallActivity.class)
+                        .putExtra(Global.PRAYER_START_TIME, mPrayerTime.getStartFajr()));
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void showCalender() {
+        MyCalendarView
+                myCalendarView = MyCalendarView.getInstance(MainActivity.this, true);
+
+        myCalendarView.setOnDateSetListener(MainActivity.this);
+        myCalendarView.setMinMaxHijriYear(1430, 1450);
+        myCalendarView.setMinMaxGregorianYear(2013, 2020);
+        myCalendarView.setMode(MyCalendarView.Mode.Hijri);
+        myCalendarView.setAdjustment(2);
+        myCalendarView.setUILanguage(MyCalendarView.Language.Arabic);
+//                        .setDefaultHijriDate(8, 0, 1437)//months start from 0
+        myCalendarView.setEnableScrolling(false);
+
+        myCalendarView.showDialog();
     }
 
     private void goToReminderActivity(int prayerWakto, String prayerStartTime, String prayerEndTime, String prayerWaktoName) {
@@ -575,14 +600,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 goToReminderActivity(5, mPrayerTime.getStartIsha(),
                         mPrayerTime.getEndIsha(), "Isha");
                 break;
-            case R.id.btnAutoCall:
-//                Utils.log("Minute: " + Utils.getMinute());
-//                myAlarmManager.setTestAlarm(0, 0, Utils.getMinute() + 1, 0, 1, 123, "Call", false);
-//                //Open call function
-//                Utils.call("0191355565");
-                startActivity(new Intent(MainActivity.this, SetReminderPhoneCallActivity.class)
-                        .putExtra(Global.PRAYER_START_TIME, mPrayerTime.getStartFajr()));
-                break;
             case R.id.tvSet:
                 ReminderHijriActivity.arabicEnglishMonth = arabicEnglishMonths.get(0);
                 startActivity(new Intent(MainActivity.this, ReminderHijriActivity.class));
@@ -596,5 +613,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(MainActivity.this, ReminderHijriActivity.class));
                 break;
         }
+    }
+
+    @Override
+    public void onDateSet(int year, int month, int day) {
+        Utils.log("Pick Hijri: " + day + "/" + (month) + "/" + year);
     }
 }
