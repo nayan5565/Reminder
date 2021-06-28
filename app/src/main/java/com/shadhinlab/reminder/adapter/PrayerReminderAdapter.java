@@ -13,24 +13,23 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.shadhinlab.reminder.R;
-import com.shadhinlab.reminder.models.MHijriReminder;
-import com.shadhinlab.reminder.models.MReminderNumber;
+import com.shadhinlab.reminder.models.MPrayerReminder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class HijriReminderAdapter extends RecyclerView.Adapter<HijriReminderAdapter.MyViewHolder> {
-    private List<MHijriReminder> mHijriReminders;
+public abstract class PrayerReminderAdapter extends RecyclerView.Adapter<PrayerReminderAdapter.MyViewHolder> {
+    private List<MPrayerReminder> mHijriReminders;
     private Context context;
     private LayoutInflater inflater;
 
-    public HijriReminderAdapter(Context context) {
+    public PrayerReminderAdapter(Context context) {
         mHijriReminders = new ArrayList<>();
         this.context = context;
         inflater = LayoutInflater.from(context);
     }
 
-    public void setData(List<MHijriReminder> mAlarms) {
+    public void setData(List<MPrayerReminder> mAlarms) {
         this.mHijriReminders = mAlarms;
         notifyDataSetChanged();
 
@@ -38,15 +37,15 @@ public abstract class HijriReminderAdapter extends RecyclerView.Adapter<HijriRem
 
     @NonNull
     @Override
-    public HijriReminderAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public PrayerReminderAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.row_hijri, parent, false);
-        return new HijriReminderAdapter.MyViewHolder(view);
+        return new PrayerReminderAdapter.MyViewHolder(view);
     }
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(@NonNull HijriReminderAdapter.MyViewHolder holder, final int position) {
-        MHijriReminder mReminderNumber = mHijriReminders.get(position);
+    public void onBindViewHolder(@NonNull PrayerReminderAdapter.MyViewHolder holder, final int position) {
+        MPrayerReminder mReminderNumber = mHijriReminders.get(position);
         holder.tvDay.setText("Set reminder "+mReminderNumber.getReminderTime());
         holder.tvDay.setTextColor(Color.WHITE);
 //        holder.relDay.setBackgroundResource(R.drawable.circle_unselect);

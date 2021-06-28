@@ -5,22 +5,22 @@ import androidx.room.PrimaryKey;
 
 import java.util.Date;
 
-@Entity(tableName = "alarm_list")
-public class MAlarm {
+@Entity(tableName = "prayer_reminder")
+public class MPrayerReminder {
     @PrimaryKey(autoGenerate = true)
     private int id;
     private int beforePrayerStartTime, afterPrayerStartTime, beforePrayerEndTime, afterPrayerEndTime, pendingID, hour, min, prayerWakto;
     private long longAlarmTime;
-    private String alarmName, dialogText, pickTime;
+    private String alarmName, dialogText, reminderTime;
     private Date alarmDateTime;
     private boolean isStopAlarm, isLongClick, isVibrate, isBeforeAlarm, isStartTime;
 
-    public String getPickTime() {
-        return pickTime;
+    public String getReminderTime() {
+        return reminderTime;
     }
 
-    public void setPickTime(String pickTime) {
-        this.pickTime = pickTime;
+    public void setReminderTime(String reminderTime) {
+        this.reminderTime = reminderTime;
     }
 
     public boolean isBeforeAlarm() {

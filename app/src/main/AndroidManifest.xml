@@ -34,6 +34,7 @@
         android:theme="@style/Theme.Reminder"
         tools:node="replace"
         tools:targetApi="n">
+        <activity android:name=".activities.PrayerReminderListActivity"></activity>
         <activity android:name=".activities.ReminderHijriActivity" />
         <activity
             android:name=".activities.SetPhoneCallReminderActivity"

@@ -129,7 +129,7 @@ public class ReminderHijriActivity extends AppCompatActivity {
                     0, 123, Global.REMINDER_HIJRI, "", false);
             String pickTimes = Utils.getTimeConverter(Utils.timeCalculate(pickHour, pickMinute, 0));
             saveDb();
-        }
+        }else Utils.showToast("Please pick time");
     }
 
     private void display() {

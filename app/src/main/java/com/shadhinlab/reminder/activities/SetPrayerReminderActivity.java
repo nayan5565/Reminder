@@ -3,6 +3,7 @@ package com.shadhinlab.reminder.activities;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -13,7 +14,7 @@ import com.shadhinlab.reminder.R;
 import com.shadhinlab.reminder.db.MyDatabase;
 import com.shadhinlab.reminder.dialogs.ConfirmationPopup;
 import com.shadhinlab.reminder.dialogs.FireAlarmPopup;
-import com.shadhinlab.reminder.models.MAlarm;
+import com.shadhinlab.reminder.models.MPrayerReminder;
 import com.shadhinlab.reminder.models.MRepeatAlarm;
 import com.shadhinlab.reminder.tools.Global;
 import com.shadhinlab.reminder.tools.MyAlarmManager;
@@ -24,16 +25,16 @@ import com.shadhinlab.reminder.tools.VibratePlayer;
 import java.util.List;
 
 public class SetPrayerReminderActivity extends AppCompatActivity implements RingtonePlayer.OnFinishListener {
-    public static MAlarm updateAlarm;
+    public static MPrayerReminder updateAlarm;
     private int pickBeforeStartTime, pickAfterStartTime, pickBeforeEndTime,
             pickAfterEndTime, alarmSize = 0, prayerWakto;
     private String prayerStartTime = "", prayerEndTime = "", prayerWaktoName = "";
-    private List<MAlarm> alarmList;
+    private List<MPrayerReminder> alarmList;
     private SeekBar sbBeforeStart, sbAfterStart, sbBeforeEnd, sbAfterEnd;
     private MyDatabase myDatabase;
     private Button btnSetAlarm, btnTestAlarm;
     private MyAlarmManager myAlarmManager;
-    private MAlarm mAlarm;
+    private MPrayerReminder mPrayerReminder;
     private Toolbar toolbar;
     private RingtonePlayer ringtonePlayer;
     private VibratePlayer vibratePlayer;
@@ -45,7 +46,7 @@ public class SetPrayerReminderActivity extends AppCompatActivity implements Ring
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_reminder);
-        MainActivity.isSettings=false;
+        MainActivity.isSettings = false;
         init();
         seekbarSetup();
 //        myAlarmManager.setSingleAlarm(16, 23, 3, prayerWakto, 123, "", false, false);
@@ -62,7 +63,7 @@ public class SetPrayerReminderActivity extends AppCompatActivity implements Ring
         Utils.log("Intent end time: " + prayerEndTime.split(":")[0]);
         myAlarmManager = new MyAlarmManager(this);
         myDatabase = MyDatabase.getInstance(this);
-        alarmList = myDatabase.myDao().getAlarmDetails();
+        alarmList = myDatabase.myDao().getReminderPrayerSorting();
         tvPickingBeforeStartTime = findViewById(R.id.tvPickingBeforeStartTime);
         tvPickingAfterStartTime = findViewById(R.id.tvPickingAfterStartTime);
         tvPickingBeforeEndTime = findViewById(R.id.tvPickingBeforeEndTime);
@@ -133,16 +134,20 @@ public class SetPrayerReminderActivity extends AppCompatActivity implements Ring
 
 
     private void clickSetAlarm() {
-//        cancelAlarm();
-        if (pickBeforeStartTime > 5)
-            createBeforeAlarm(Integer.parseInt(prayerStartTime.split(":")[0]), Integer.parseInt(prayerStartTime.split(":")[1]));
-        if (pickAfterStartTime > 5)
-            createAfterAlarm(Integer.parseInt(prayerStartTime.split(":")[0]), Integer.parseInt(prayerStartTime.split(":")[1]));
+        if (pickBeforeStartTime > 5 || pickAfterStartTime > 5 || pickBeforeEndTime > 5 || pickAfterEndTime > 5) {
+            if (pickBeforeStartTime > 5)
+                createBeforeAlarm(Integer.parseInt(prayerStartTime.split(":")[0]), Integer.parseInt(prayerStartTime.split(":")[1]));
+            if (pickAfterStartTime > 5)
+                createAfterAlarm(Integer.parseInt(prayerStartTime.split(":")[0]), Integer.parseInt(prayerStartTime.split(":")[1]));
 
-        if (pickBeforeEndTime > 5)
-            createBeforeEndAlarm(Integer.parseInt(prayerEndTime.split(":")[0]), Integer.parseInt(prayerEndTime.split(":")[1]));
-        if (pickAfterEndTime > 5)
-            createAfterEndAlarm(Integer.parseInt(prayerEndTime.split(":")[0]), Integer.parseInt(prayerEndTime.split(":")[1]));
+            if (pickBeforeEndTime > 5)
+                createBeforeEndAlarm(Integer.parseInt(prayerEndTime.split(":")[0]), Integer.parseInt(prayerEndTime.split(":")[1]));
+            if (pickAfterEndTime > 5)
+                createAfterEndAlarm(Integer.parseInt(prayerEndTime.split(":")[0]), Integer.parseInt(prayerEndTime.split(":")[1]));
+            Utils.showToast("Successfully set reminder");
+            startActivity(new Intent(SetPrayerReminderActivity.this, PrayerReminderListActivity.class));
+        } else Utils.showToast("Minimum pick 10 minutes from anyone");
+
     }
 
     private void seekbarSetup() {
@@ -263,7 +268,7 @@ public class SetPrayerReminderActivity extends AppCompatActivity implements Ring
     private void createBeforeAlarm(int hour, int minute) {
         String pickTimes = Utils.getTimeConverter(Utils.timeCalculate(hour, minute, pickBeforeStartTime));
         Utils.log("pickTimes: " + pickTimes);
-        myAlarmManager.setSingleAlarm(hour, minute, pickBeforeStartTime, prayerWakto, 123, "","", true, false);
+        myAlarmManager.setSingleAlarm(hour, minute, pickBeforeStartTime, prayerWakto, 123, "", "", true, false);
 //        myAlarmManager.setSingleAlarm(Calendar.FRIDAY, hour, minute, pickBeforeTime, updateAlarm.getPendingID(), "", false);
         saveDb(hour, minute, pickTimes, true, true);
 
@@ -272,7 +277,7 @@ public class SetPrayerReminderActivity extends AppCompatActivity implements Ring
     private void createAfterAlarm(int hour, int minute) {
         String pickTimes = Utils.getTimeConverter(Utils.timeCalculate(hour, minute, pickAfterStartTime));
         Utils.log("createAfterAlarm: " + prayerWakto);
-        myAlarmManager.setSingleAlarm(hour, minute, pickAfterStartTime, prayerWakto, 123, "","", false, false);
+        myAlarmManager.setSingleAlarm(hour, minute, pickAfterStartTime, prayerWakto, 123, "", "", false, false);
 //        myAlarmManager.setNextDayAlarmPrayer(hour, minute, pickAfterStartTime, prayerWakto, 123, "", false, false);
         saveDb(hour, minute, pickTimes, false, true);
     }
@@ -280,7 +285,7 @@ public class SetPrayerReminderActivity extends AppCompatActivity implements Ring
     private void createBeforeEndAlarm(int hour, int minute) {
         String pickTimes = Utils.getTimeConverter(Utils.timeCalculate(hour, minute, pickBeforeEndTime));
         Utils.log("pickTimes: " + pickTimes);
-        myAlarmManager.setSingleAlarm(hour, minute, pickBeforeEndTime, prayerWakto, 123, "","", true, false);
+        myAlarmManager.setSingleAlarm(hour, minute, pickBeforeEndTime, prayerWakto, 123, "", "", true, false);
         saveDb(hour, minute, pickTimes, true, false);
 
     }
@@ -288,26 +293,26 @@ public class SetPrayerReminderActivity extends AppCompatActivity implements Ring
     private void createAfterEndAlarm(int hour, int minute) {
         String pickTimes = Utils.getTimeConverter(Utils.timeCalculate(hour, minute, pickAfterEndTime));
         Utils.log("createAfterAlarm: " + prayerWakto);
-        myAlarmManager.setSingleAlarm(hour, minute, pickAfterEndTime, prayerWakto, 123, "","", false, false);
+        myAlarmManager.setSingleAlarm(hour, minute, pickAfterEndTime, prayerWakto, 123, "", "", false, false);
         saveDb(hour, minute, pickTimes, false, false);
     }
 
     private void saveDb(int hour, int minute, String pickTimes, boolean isBefore, boolean isStartTime) {
-        mAlarm = new MAlarm();
-        mAlarm.setBeforePrayerStartTime(pickBeforeStartTime);
-        mAlarm.setAfterPrayerStartTime(pickAfterStartTime);
-        mAlarm.setBeforePrayerEndTime(pickBeforeEndTime);
-        mAlarm.setAfterPrayerEndTime(pickAfterEndTime);
-        mAlarm.setPrayerWakto(prayerWakto);
-        mAlarm.setBeforeAlarm(isBefore);
-        mAlarm.setStartTime(isStartTime);
-        mAlarm.setHour(hour);
-        mAlarm.setMin(minute);
-        mAlarm.setPendingID(myAlarmManager.pendingId);
-        mAlarm.setLongAlarmTime(myAlarmManager.alarmTimeLong);
-        mAlarm.setPickTime(pickTimes);
-        myDatabase.myDao().saveAlarmDetails(mAlarm);
-        List<MAlarm> alarmList = myDatabase.myDao().getAlarmByWakto(prayerWakto, myAlarmManager.pendingId);
+        mPrayerReminder = new MPrayerReminder();
+        mPrayerReminder.setBeforePrayerStartTime(pickBeforeStartTime);
+        mPrayerReminder.setAfterPrayerStartTime(pickAfterStartTime);
+        mPrayerReminder.setBeforePrayerEndTime(pickBeforeEndTime);
+        mPrayerReminder.setAfterPrayerEndTime(pickAfterEndTime);
+        mPrayerReminder.setPrayerWakto(prayerWakto);
+        mPrayerReminder.setBeforeAlarm(isBefore);
+        mPrayerReminder.setStartTime(isStartTime);
+        mPrayerReminder.setHour(hour);
+        mPrayerReminder.setMin(minute);
+        mPrayerReminder.setPendingID(myAlarmManager.pendingId);
+        mPrayerReminder.setLongAlarmTime(myAlarmManager.alarmTimeLong);
+        mPrayerReminder.setReminderTime(Utils.getDateTimeConverter(myAlarmManager.getTime));
+        myDatabase.myDao().saveReminderPrayer(mPrayerReminder);
+        List<MPrayerReminder> alarmList = myDatabase.myDao().getReminderPrayerWakto(prayerWakto, myAlarmManager.pendingId);
         Utils.log("Alarm size: " + alarmList.size() + " : " + myAlarmManager.pendingId + " : " + prayerWakto);
         for (int i = 0; i < alarmList.size(); i++) {
             Utils.log("DB: " + alarmList.get(i).getPendingID() + " : " + alarmList.get(i).getPrayerWakto());
@@ -318,7 +323,7 @@ public class SetPrayerReminderActivity extends AppCompatActivity implements Ring
     private boolean isAlreadyPickTime(String pickTimes) {
         if (alarmList.size() > 0) {
             for (int i = 0; i < alarmList.size(); i++) {
-                if (alarmList.get(i).getPickTime().equals(pickTimes)) {
+                if (alarmList.get(i).getReminderTime().equals(pickTimes)) {
                     return true;
                 }
             }

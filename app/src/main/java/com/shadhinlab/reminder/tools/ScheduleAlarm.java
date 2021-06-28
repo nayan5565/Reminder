@@ -6,7 +6,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import com.shadhinlab.reminder.db.MyDatabase;
-import com.shadhinlab.reminder.models.MAlarm;
+import com.shadhinlab.reminder.models.MPrayerReminder;
 import com.shadhinlab.reminder.models.MArabicEnglishMonth;
 import com.shadhinlab.reminder.models.MCallHijriCalender;
 import com.shadhinlab.reminder.models.MHijriCalender;
@@ -23,7 +23,7 @@ import retrofit2.Response;
 
 
 public class ScheduleAlarm {
-    private List<MAlarm> alarmList;
+    private List<MPrayerReminder> alarmList;
     private MyDatabase myDatabase;
     private MyAlarmManager myAlarmManager;
 
@@ -35,14 +35,14 @@ public class ScheduleAlarm {
 
         alarmList = new ArrayList<>();
         myDatabase = MyDatabase.getInstance(MyApp.getInstance().getContext());
-        alarmList = myDatabase.myDao().getAlarmDetails();
+        alarmList = myDatabase.myDao().getReminderPrayerSorting();
 //        nextAllAlarm();
 
     }
 
     public void nextAllAlarm() {
 
-        alarmList = myDatabase.myDao().getAlarmDetails();
+        alarmList = myDatabase.myDao().getReminderPrayerSorting();
         if (alarmList.size() > 0) {
             for (int i = 0; i < alarmList.size(); i++) {
 
@@ -211,7 +211,7 @@ public class ScheduleAlarm {
 
     public void nextWaktoAlarm(int prayerWakto, int pendingId) {
         Utils.log("Schedule Next Day prayer: " + getTomorrowPrayerStartTime(prayerWakto));
-        List<MAlarm> alarmList = myDatabase.myDao().getAlarmByWakto(prayerWakto, pendingId);
+        List<MPrayerReminder> alarmList = myDatabase.myDao().getReminderPrayerWakto(prayerWakto, pendingId);
         Utils.log("Schedule Alarm size: " + alarmList.size() + " : " + pendingId);
         if (!getTomorrowPrayerStartTime(prayerWakto).isEmpty()) {
 
@@ -256,29 +256,29 @@ public class ScheduleAlarm {
 //        else Utils.showToast("Already started snooze");
     }
 
-    private void saveDb(MAlarm alarm, int hour, int minute) {
-        MAlarm mAlarm = new MAlarm();
-        mAlarm.setId(alarm.getId());
-        mAlarm.setBeforePrayerStartTime(alarm.getBeforePrayerStartTime());
-        mAlarm.setAfterPrayerStartTime(alarm.getAfterPrayerStartTime());
-        mAlarm.setBeforePrayerEndTime(alarm.getBeforePrayerEndTime());
-        mAlarm.setAfterPrayerEndTime(alarm.getAfterPrayerEndTime());
-        mAlarm.setPrayerWakto(alarm.getPrayerWakto());
-        mAlarm.setBeforeAlarm(alarm.isBeforeAlarm());
-        mAlarm.setStartTime(alarm.isStartTime());
-        mAlarm.setHour(hour);
-        mAlarm.setMin(minute);
-        mAlarm.setPendingID(alarm.getPendingID());
-        mAlarm.setLongAlarmTime(myAlarmManager.alarmTimeLong);
-        mAlarm.setPickTime(alarm.getPickTime());
-        myDatabase.myDao().saveAlarmDetails(mAlarm);
+    private void saveDb(MPrayerReminder alarm, int hour, int minute) {
+        MPrayerReminder mPrayerReminder = new MPrayerReminder();
+        mPrayerReminder.setId(alarm.getId());
+        mPrayerReminder.setBeforePrayerStartTime(alarm.getBeforePrayerStartTime());
+        mPrayerReminder.setAfterPrayerStartTime(alarm.getAfterPrayerStartTime());
+        mPrayerReminder.setBeforePrayerEndTime(alarm.getBeforePrayerEndTime());
+        mPrayerReminder.setAfterPrayerEndTime(alarm.getAfterPrayerEndTime());
+        mPrayerReminder.setPrayerWakto(alarm.getPrayerWakto());
+        mPrayerReminder.setBeforeAlarm(alarm.isBeforeAlarm());
+        mPrayerReminder.setStartTime(alarm.isStartTime());
+        mPrayerReminder.setHour(hour);
+        mPrayerReminder.setMin(minute);
+        mPrayerReminder.setPendingID(alarm.getPendingID());
+        mPrayerReminder.setLongAlarmTime(myAlarmManager.alarmTimeLong);
+        mPrayerReminder.setReminderTime(alarm.getReminderTime());
+        myDatabase.myDao().saveReminderPrayer(mPrayerReminder);
 
     }
 
 
-    public void cancelAlarm(MAlarm mAlarm) {
-        if (mAlarm != null) {
-            myAlarmManager.cancelAlarm(mAlarm.getPendingID());
+    public void cancelAlarm(MPrayerReminder mPrayerReminder) {
+        if (mPrayerReminder != null) {
+            myAlarmManager.cancelAlarm(mPrayerReminder.getPendingID());
         }
 
     }

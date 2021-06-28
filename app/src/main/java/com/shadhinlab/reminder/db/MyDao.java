@@ -6,7 +6,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import com.shadhinlab.reminder.models.MAlarm;
+import com.shadhinlab.reminder.models.MPrayerReminder;
 import com.shadhinlab.reminder.models.MArabicEnglishMonth;
 import com.shadhinlab.reminder.models.MHijriReminder;
 import com.shadhinlab.reminder.models.MPrayer;
@@ -76,32 +76,32 @@ public interface MyDao {
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long saveAlarmDetails(MAlarm alarm);
+    long saveReminderPrayer(MPrayerReminder alarm);
 
-    @Query("select * from alarm_list where prayerWakto=:prayerWakto AND pendingID=:pendingId")
-    List<MAlarm> getAlarmByWakto(int prayerWakto, int pendingId);
+    @Query("select * from prayer_reminder where prayerWakto=:prayerWakto AND pendingID=:pendingId")
+    List<MPrayerReminder> getReminderPrayerWakto(int prayerWakto, int pendingId);
 
-    @Query("select * from alarm_list order by alarmDateTime asc")
-    List<MAlarm> getAlarmDetails();
+    @Query("select * from prayer_reminder order by alarmDateTime asc")
+    List<MPrayerReminder> getReminderPrayerSorting();
 
-    @Query("select * from alarm_list")
-    List<MAlarm> getAllAlarmDetails();
+    @Query("select * from prayer_reminder")
+    List<MPrayerReminder> getAllReminderPrayer();
 
-    @Query("select * from alarm_list where id=:id")
-    MAlarm getAlarmDetails(int id);
+    @Query("select * from prayer_reminder where id=:id")
+    MPrayerReminder getReminderPrayerDetails(int id);
 
-    @Query("select * from alarm_list where pendingID=:pendingID")
-    MAlarm getAlarmDetailsByPending(int pendingID);
+    @Query("select * from prayer_reminder where pendingID=:pendingID")
+    MPrayerReminder getReminderPrayerDetailsByPending(int pendingID);
 
 
-    @Query("delete from alarm_list where id=:id")
-    int deleteAlarmDetails(int id);
+    @Query("delete from prayer_reminder where id=:id")
+    int deletePrayerReminder(int id);
 
-    @Query("delete from alarm_list where alarmDateTime<:date")
-    int deleteAlarmDetailsByDate(Date date);
+    @Query("delete from prayer_reminder where alarmDateTime<:date")
+    int deleteAllPrayerReminderByDate(Date date);
 
-    @Query("delete from alarm_list")
-    void deleteAllAlarmDetails();
+    @Query("delete from prayer_reminder")
+    void deleteAllReminderPrayer();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void saveRepeatAlarmDetails(MRepeatAlarm repeatAlarm);

@@ -33,7 +33,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.shadhinlab.reminder.R;
 import com.shadhinlab.reminder.activities.calender.MyCalendarView;
-import com.shadhinlab.reminder.models.MAlarm;
+import com.shadhinlab.reminder.models.MPrayerReminder;
 import com.shadhinlab.reminder.models.MArabicEnglishMonth;
 import com.shadhinlab.reminder.models.MCallHijriCalender;
 import com.shadhinlab.reminder.models.MHijriCalender;
@@ -106,15 +106,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        myAlarmManager.setAlarmDateWise(Utils.getMonthFromCalender(), 16, 10, 10, 0, 0, 123, "", "", false);
 
         Utils.log("unixTime: " + Utils.getYear());
-        List<MAlarm> alarmList = myDatabase.myDao().getAllAlarmDetails();
+        List<MPrayerReminder> alarmList = myDatabase.myDao().getAllReminderPrayer();
 //        List<MAlarm> alarmList = myDatabase.myDao().getAlarmByWakto(3, 170582503);
         Utils.log("Alarm size: " + alarmList.size());
         for (int i = 0; i < alarmList.size(); i++) {
             Utils.log("DB: " + alarmList.get(i).getPendingID() + " : " + alarmList.get(i).getPrayerWakto());
         }
-        if (mPrayerTime != null)
-            enableClickListener(true);
-        else enableClickListener(false);
+//        if (mPrayerTime != null)
+//            enableClickListener(true);
+//        else enableClickListener(false);
 
 
     }
@@ -267,9 +267,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mPrayer = myDatabase.myDao().getPrayer();
                 savePrayer(response.body());
                 getCurrentPrayerTime();
-                if (mPrayerTime != null)
-                    enableClickListener(true);
-                else enableClickListener(false);
+//                if (mPrayerTime != null)
+//                    enableClickListener(true);
+//                else enableClickListener(false);
                 Log.e("Data", "Is: " + mPrayer.getData().get(0).getDate().getReadable());
             }
 
@@ -535,7 +535,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             case R.id.actionCalender:
-                MainActivity.isSettings=false;
+                MainActivity.isSettings = false;
                 showCalender();
                 return true;
             case R.id.actionReminderPhone:
@@ -573,6 +573,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .putExtra(Global.PRAYER_START_TIME, prayerStartTime)
                 .putExtra(Global.PRAYER_END_TIME, prayerEndTime)
                 .putExtra(Global.PRAYER_WAKTO_NAME, prayerWaktoName));
+
+
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -580,36 +582,77 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tvSetFajrTime:
-                goToReminderActivity(1, mPrayerTime.getStartFajr(),
-                        mPrayerTime.getEndtFajr(), "Fajr");
+                if (mPrayerTime != null) {
+                    goToReminderActivity(1, mPrayerTime.getStartFajr(),
+                            mPrayerTime.getEndtFajr(), "Fajr");
+                } else {
+                    Utils.showToast("Have not any record");
+                    Utils.log("dave not");
+                }
                 break;
             case R.id.tvSetDhuhrTime:
-                goToReminderActivity(2, mPrayerTime.getStartDhuhr(),
-                        mPrayerTime.getEndDhuhr(), "Dhuhr");
+                if (mPrayerTime != null) {
+                    goToReminderActivity(2, mPrayerTime.getStartDhuhr(),
+                            mPrayerTime.getEndDhuhr(), "Dhuhr");
+                } else {
+                    Utils.showToast("Have not any record");
+                    Utils.log("dave not");
+                }
                 break;
             case R.id.tvSetAsrTime:
-                goToReminderActivity(3, mPrayerTime.getStartAsr(),
-                        mPrayerTime.getEndAsr(), "Asr");
+                if (mPrayerTime != null) {
+                    goToReminderActivity(3, mPrayerTime.getStartAsr(),
+                            mPrayerTime.getEndAsr(), "Asr");
+                } else {
+                    Utils.showToast("Have not any record");
+                    Utils.log("dave not");
+                }
                 break;
             case R.id.tvSetMaghribTime:
-                goToReminderActivity(4, mPrayerTime.getStartMaghrib(),
-                        mPrayerTime.getEndMaghrib(), "Maghrib");
+                if (mPrayerTime != null) {
+                    goToReminderActivity(4, mPrayerTime.getStartMaghrib(),
+                            mPrayerTime.getEndMaghrib(), "Maghrib");
+                } else {
+                    Utils.showToast("Have not any record");
+                    Utils.log("dave not");
+                }
                 break;
             case R.id.tvSetIshaTime:
-                goToReminderActivity(5, mPrayerTime.getStartIsha(),
-                        mPrayerTime.getEndIsha(), "Isha");
+                if (mPrayerTime != null) {
+                    goToReminderActivity(5, mPrayerTime.getStartIsha(),
+                            mPrayerTime.getEndIsha(), "Isha");
+                } else {
+                    Utils.showToast("Have not any record");
+                    Utils.log("dave not");
+                }
                 break;
             case R.id.tvSet:
-                ReminderHijriActivity.arabicEnglishMonth = arabicEnglishMonths.get(0);
-                startActivity(new Intent(MainActivity.this, ReminderHijriActivity.class));
+                if (arabicEnglishMonths.size() > 0) {
+                    ReminderHijriActivity.arabicEnglishMonth = arabicEnglishMonths.get(0);
+                    startActivity(new Intent(MainActivity.this, ReminderHijriActivity.class));
+                } else {
+                    Utils.showToast("Have not any record");
+                    Utils.log("dave not");
+                }
+
                 break;
             case R.id.tvSet2:
-                ReminderHijriActivity.arabicEnglishMonth = arabicEnglishMonths.get(1);
-                startActivity(new Intent(MainActivity.this, ReminderHijriActivity.class));
+                if (arabicEnglishMonths.size() > 0) {
+                    ReminderHijriActivity.arabicEnglishMonth = arabicEnglishMonths.get(1);
+                    startActivity(new Intent(MainActivity.this, ReminderHijriActivity.class));
+                } else {
+                    Utils.showToast("Have not any record");
+                    Utils.log("dave not");
+                }
                 break;
             case R.id.tvSet3:
-                ReminderHijriActivity.arabicEnglishMonth = arabicEnglishMonths.get(2);
-                startActivity(new Intent(MainActivity.this, ReminderHijriActivity.class));
+                if (arabicEnglishMonths.size() > 0) {
+                    ReminderHijriActivity.arabicEnglishMonth = arabicEnglishMonths.get(2);
+                    startActivity(new Intent(MainActivity.this, ReminderHijriActivity.class));
+                } else {
+                    Utils.showToast("Have not any record");
+                    Utils.log("dave not");
+                }
                 break;
         }
     }
