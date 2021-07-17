@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Utils.log("Diff: " + Utils.calculateMinutes("03:44", Utils.getTodaysTime24Fomat()));
         init();
         clickListener();
-        getCurrentPrayerTime();
+        display();
         locationPermission();
         locationCallBack();
         Utils.log("Save Day: " + Utils.getPref(Global.SAVE_DAY, 0) + " : " + Utils.getDay());
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         } else Utils.log("Already get Hijri");
 
-        displayHijriCalender();
+        displayHijriDateMiddleMonth();
         long unixTime = System.currentTimeMillis() / 1000L;
 //        myAlarmManager.setAlarmDateWise(Utils.getMonthFromCalender(), 16, 10, 10, 0, 0, 123, "", "", false);
 
@@ -255,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    private void getNamzTimes(double lat, double lng) {
+    private void getNamazTimes(double lat, double lng) {
         Utils.log("getSunriseTimeOther");
         Call<MPrayer> call = ApiClient.getInstance().getPrayerTimes(lat, lng, prayerMethod, Utils.getMonth(), Utils.getYear());
         call.enqueue(new Callback<MPrayer>() {
@@ -266,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 myDatabase.myDao().savePrayer(response.body());
                 mPrayer = myDatabase.myDao().getPrayer();
                 savePrayer(response.body());
-                getCurrentPrayerTime();
+                display();
 //                if (mPrayerTime != null)
 //                    enableClickListener(true);
 //                else enableClickListener(false);
@@ -289,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onResponse(@NonNull Call<MCallHijriCalender> call, @NonNull Response<MCallHijriCalender> response) {
                 if (response.body() != null && response.body().getData().size() > 0) {
 
-                    saveHijriCalender(response.body().getData());
+                    saveHijriDateOfMiddleMonth(response.body().getData());
                 }
             }
 
@@ -300,7 +300,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    private void saveHijriCalender(List<MHijriCalender> hijriCalenders) {
+    private void saveHijriDateOfMiddleMonth(List<MHijriCalender> hijriCalenders) {
         myDatabase.myDao().clearHijriCalender();
         for (int i = 0; i < hijriCalenders.size(); i++) {
             if (hijriCalenders.get(i).getHijri().getDay().equals("13")
@@ -318,11 +318,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
         }
-        displayHijriCalender();
+        displayHijriDateMiddleMonth();
     }
 
 
-    private void displayHijriCalender() {
+    private void displayHijriDateMiddleMonth() {
         arabicEnglishMonths = myDatabase.myDao().getHijriCalender();
         if (arabicEnglishMonths.size() > 2) {
             tvArDate.setText(arabicEnglishMonths.get(0).getArDate());
@@ -341,6 +341,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void savePrayer(MPrayer prayer) {
         MPrayerTime mPrayerTime;
         if (prayer != null && prayer.getData() != null && prayer.getData().size() > 0) {
+            Utils.log("SavePrayer:");
             for (int i = 0; i < prayer.getData().size(); i++) {
                 mPrayerTime = new MPrayerTime();
                 mPrayerTime.setDate(prayer.getData().get(i).getDate().getReadable());
@@ -362,21 +363,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private boolean getCurrentPrayerTime() {
+    private void getCurrentPrayerTime() {
         if (myDatabase.myDao().getPrayer() != null && myDatabase.myDao().getPrayer().getData() != null && myDatabase.myDao().getPrayer().getData().size() > 0) {
             for (int i = 0; i < myDatabase.myDao().getPrayer().getData().size(); i++) {
                 if (myDatabase.myDao().getPrayer().getData().get(i).getDate().getReadable().equals(Utils.getDate())) {
                     Utils.log("Pos: " + myDatabase.myDao().getPrayer().getData().get(i).getDate().getReadable());
                     Utils.log("Pos 2 : " + myDatabase.myDao().getPrayer().getData().get(i).getTimings().getIsha());
                     mTime = myDatabase.myDao().getPrayer().getData().get(i).getTimings();
-                    display();
-                    return true;
+
+
                 }
             }
 
         }
 
-        return false;
+        display();
     }
 
     @SuppressLint("MissingPermission")
@@ -398,7 +399,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 Location mLastLocation = locationResult.getLastLocation();
-                getNamzTimes(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                getNamazTimes(mLastLocation.getLatitude(), mLastLocation.getLongitude());
                 Utils.log("onLocationResult Lat : " + mLastLocation.getLatitude() + " Lng : " + mLastLocation.getLongitude());
             }
         };
@@ -418,7 +419,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
                             // Logic to handle location object
-                            getNamzTimes(location.getLatitude(), location.getLongitude());
+                            getNamazTimes(location.getLatitude(), location.getLongitude());
                             Log.e("Location", "mFusedLocationClient Lat : " + location.getLatitude() + " Lng : " + location.getLongitude());
                         } else {
                             Utils.log("getLocation null");
@@ -559,7 +560,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         myCalendarView.setMinMaxHijriYear(1430, 1450);
         myCalendarView.setMinMaxGregorianYear(2013, 2020);
         myCalendarView.setMode(MyCalendarView.Mode.Hijri);
-        myCalendarView.setAdjustment(2);
+        myCalendarView.setAdjustment(1);
         myCalendarView.setUILanguage(MyCalendarView.Language.Arabic);
 //                        .setDefaultHijriDate(8, 0, 1437)//months start from 0
         myCalendarView.setEnableScrolling(false);
